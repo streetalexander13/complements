@@ -1,0 +1,231 @@
+<div *ngIf="supplement" class="product-detail-container">
+  <!-- Product Header - Minimalist -->
+  <div class="product-header">
+    <div class="container">
+      <div class="product-content">
+        <div class="product-image">
+          <img [src]="supplement.imageUrl" [alt]="supplement.name" class="product-img">
+        </div>
+        
+        <div class="product-info">
+          <div class="product-category">{{ supplement.category | titlecase }}</div>
+          <h1 class="product-title">{{ supplement.name }}</h1>
+          <p class="product-description">{{ supplement.description }}</p>
+          
+          <div class="product-rating">
+            <span class="rating-stars">★★★★★</span>
+            <span class="rating-text">{{ supplement.rating }}/5 ({{ supplement.reviewCount }} reviews)</span>
+          </div>
+          
+          <div class="product-price">
+            <span class="current-price">{{ formatPrice(supplement.price) }}</span>
+            <span class="price-unit">per bottle</span>
+          </div>
+          
+          <div class="quantity-selector">
+            <label class="quantity-label">Quantity</label>
+            <div class="quantity-controls">
+              <button (click)="decreaseQuantity()" class="quantity-btn">−</button>
+              <span class="quantity-display">{{ quantity }}</span>
+              <button (click)="increaseQuantity()" class="quantity-btn">+</button>
+            </div>
+            <div class="total-price">
+              Total: {{ formatPrice(getTotalPrice()) }}
+            </div>
+          </div>
+          
+          <div class="product-actions">
+            <button class="btn btn-primary btn-large" (click)="addToCart()">
+              Add to Cart
+            </button>
+            <button class="btn btn-secondary">
+              Add to Wishlist
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Tabs - Minimalist -->
+  <div class="product-tabs">
+    <div class="container">
+      <div class="tab-navigation">
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'benefits'"
+          (click)="selectTab('benefits')">
+          Benefits
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'ingredients'"
+          (click)="selectTab('ingredients')">
+          Ingredients
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'dosage'"
+          (click)="selectTab('dosage')">
+          Usage
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'research'"
+          (click)="selectTab('research')">
+          Research
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'safety'"
+          (click)="selectTab('safety')">
+          Safety
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        
+        <!-- Benefits Tab -->
+        <div *ngIf="selectedTab === 'benefits'" class="tab-panel">
+          <h2>Benefits & Evidence</h2>
+          <div class="benefits-list">
+            <div *ngFor="let benefit of supplement.benefits" class="benefit-item">
+              <div class="benefit-header">
+                <h3>{{ benefit.title }}</h3>
+                <div class="evidence-strength" [ngClass]="getStrengthClass(benefit.strength)">
+                  {{ getStrengthLabel(benefit.strength) }}
+                </div>
+              </div>
+              <p class="benefit-description">{{ benefit.description }}</p>
+              <div class="target-population">
+                <strong>Target Population:</strong> {{ benefit.targetPopulation.join(', ') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingredients Tab -->
+        <div *ngIf="selectedTab === 'ingredients'" class="tab-panel">
+          <h2>Ingredients</h2>
+          <div class="ingredients-list">
+            <div *ngFor="let ingredient of supplement.ingredients" class="ingredient-item">
+              <div class="ingredient-header">
+                <h3>{{ ingredient.name }}</h3>
+                <div class="ingredient-amount">{{ ingredient.amount }} {{ ingredient.unit }}</div>
+              </div>
+              <p class="ingredient-purpose">{{ ingredient.purpose }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dosage Tab -->
+        <div *ngIf="selectedTab === 'dosage'" class="tab-panel">
+          <h2>Usage Instructions</h2>
+          <div class="dosage-info">
+            <div class="dosage-section">
+              <h3>Recommended Dosage</h3>
+              <p class="dosage-amount">{{ supplement.dosage.recommended }}</p>
+            </div>
+            
+            <div class="dosage-section">
+              <h3>Timing</h3>
+              <p>{{ supplement.dosage.timing }}</p>
+            </div>
+            
+            <div class="dosage-section">
+              <h3>Duration</h3>
+              <p>{{ supplement.dosage.duration }}</p>
+            </div>
+            
+            <div class="dosage-section">
+              <h3>Notes</h3>
+              <p>{{ supplement.dosage.notes }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Research Tab -->
+        <div *ngIf="selectedTab === 'research'" class="tab-panel">
+          <h2>Scientific Research</h2>
+          <div class="research-summary">
+            <p>This supplement is backed by {{ supplement.scientificReferences.length }} scientific study(ies) with a combined sample size of {{ getTotalSampleSize() }} participants.</p>
+          </div>
+          
+          <div class="studies-list">
+            <div *ngFor="let study of supplement.scientificReferences" class="study-item">
+              <div class="study-header">
+                <h3>{{ study.title }}</h3>
+                <div class="study-meta">
+                  <span class="study-type" [ngClass]="getStudyTypeClass(study.studyType)">
+                    {{ getStudyTypeLabel(study.studyType) }}
+                  </span>
+                  <span class="study-year">{{ study.year }}</span>
+                  <span class="study-sample">n={{ study.sampleSize }}</span>
+                </div>
+              </div>
+              
+              <div class="study-details">
+                <div class="study-authors">
+                  <strong>Authors:</strong> {{ study.authors.join(', ') }}
+                </div>
+                <div class="study-journal">
+                  <strong>Journal:</strong> {{ study.journal }}
+                </div>
+                <div class="study-doi">
+                  <strong>DOI:</strong> 
+                  <a [href]="study.url" target="_blank" class="doi-link">{{ study.doi }}</a>
+                </div>
+              </div>
+              
+              <div class="study-findings">
+                <h4>Key Findings</h4>
+                <ul>
+                  <li *ngFor="let finding of study.keyFindings">{{ finding }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safety Tab -->
+        <div *ngIf="selectedTab === 'safety'" class="tab-panel">
+          <h2>Safety Information</h2>
+          
+          <div class="safety-section">
+            <h3>Contraindications</h3>
+            <div *ngIf="supplement.contraindications.length > 0; else noContraindications">
+              <ul class="warning-list">
+                <li *ngFor="let contraindication of supplement.contraindications" class="warning-item">
+                  {{ contraindication }}
+                </li>
+              </ul>
+            </div>
+            <ng-template #noContraindications>
+              <p class="no-warnings">No known contraindications for healthy adults.</p>
+            </ng-template>
+          </div>
+          
+          <div class="safety-section">
+            <h3>General Guidelines</h3>
+            <ul class="safety-guidelines">
+              <li>Consult with a healthcare provider before starting any new supplement</li>
+              <li>Do not exceed recommended dosage</li>
+              <li>Discontinue use if you experience any adverse reactions</li>
+              <li>Store in a cool, dry place away from direct sunlight</li>
+              <li>Keep out of reach of children</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!supplement" class="product-not-found">
+  <div class="container">
+    <h2>Product Not Found</h2>
+    <p>The requested supplement could not be found.</p>
+    <a routerLink="/" class="btn btn-primary">Back to Home</a>
+  </div>
+</div>

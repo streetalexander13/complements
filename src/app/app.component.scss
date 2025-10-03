@@ -1,0 +1,169 @@
+/* The Ordinary-inspired Minimalist App Layout */
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+}
+
+/* Header - Ultra Minimalist */
+.app-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) 0;
+}
+
+.logo {
+  .logo-link {
+    text-decoration: none;
+    color: var(--black);
+    
+    .logo-text {
+      font-size: var(--text-xl);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.main-nav {
+  display: flex;
+  gap: var(--space-2xl);
+  align-items: center;
+
+  .nav-link {
+    color: var(--gray-600);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    &:hover,
+    &.active {
+      color: var(--black);
+      border-bottom-color: var(--black);
+    }
+  }
+}
+
+/* Main Content */
+.app-main {
+  flex: 1;
+  background: var(--white);
+}
+
+/* Footer - Minimalist */
+.app-footer {
+  background: var(--white);
+  border-top: 1px solid var(--gray-200);
+  margin-top: auto;
+}
+
+.footer-content {
+  padding: var(--space-3xl) 0 var(--space-xl);
+}
+
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-2xl);
+}
+
+.footer-brand {
+  .footer-logo {
+    font-size: var(--text-lg);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-description {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+    line-height: 1.5;
+  }
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--space-xl);
+
+  .footer-link {
+    color: var(--gray-600);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--black);
+    }
+  }
+}
+
+.footer-bottom {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--gray-200);
+
+  .footer-copyright {
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-md) 0;
+  }
+
+  .main-nav {
+    gap: var(--space-lg);
+  }
+
+  .footer-main {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .footer-links {
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-nav {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
