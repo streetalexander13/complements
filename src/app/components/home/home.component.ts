@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   private async startAnimations(): Promise<void> {
     // Check if we're in browser environment
-    if (typeof document === 'undefined') {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
       return;
     }
 

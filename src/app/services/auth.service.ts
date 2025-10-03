@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { safeLocalStorage } from '../utils/browser.utils';
 
 export interface User {
   id: string;
@@ -23,10 +24,13 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
-    // Check for stored user on service initialization
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
+    // Check for stored user on service initialization (only in browser)
+    const storage = safeLocalStorage();
+    if (storage) {
+      const storedUser = storage.getItem('currentUser');
+      if (storedUser) {
+        this.currentUserSubject.next(JSON.parse(storedUser));
+      }
     }
   }
 
@@ -83,7 +87,10 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
+    const storage = safeLocalStorage();
+    if (storage) {
+      storage.removeItem('currentUser');
+    }
     this.currentUserSubject.next(null);
   }
 
@@ -96,7 +103,10 @@ export class AuthService {
   }
 
   private setCurrentUser(user: User): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    const storage = safeLocalStorage();
+    if (storage) {
+      storage.setItem('currentUser', JSON.stringify(user));
+    }
     this.currentUserSubject.next(user);
   }
 

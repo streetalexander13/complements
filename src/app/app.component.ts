@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { isBrowser } from './utils/browser.utils';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ export class AppComponent implements OnDestroy {
   }
 
   private updateBodyScroll(): void {
-    if (typeof document !== 'undefined') {
+    if (isBrowser()) {
       if (this.isMobileMenuOpen) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -43,7 +44,7 @@ export class AppComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     // Restore body scroll when component is destroyed
-    if (typeof document !== 'undefined') {
+    if (isBrowser()) {
       document.body.style.overflow = '';
     }
   }
