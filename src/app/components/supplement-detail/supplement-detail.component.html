@@ -1,0 +1,278 @@
+<div class="supplement-detail-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="container">
+      <div class="loading-content">
+        <div class="loading-shimmer loading-image"></div>
+        <div class="loading-shimmer loading-info"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplement Not Found -->
+  <div *ngIf="!isLoading && !supplement" class="not-found">
+    <div class="container">
+      <div class="not-found-content">
+        <span class="not-found-icon">🔍</span>
+        <h2>Supplement not found</h2>
+        <p>The supplement you're looking for doesn't exist.</p>
+        <button class="btn btn-primary" (click)="goBack()">Back to Supplements</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplement Detail -->
+  <div *ngIf="!isLoading && supplement" class="supplement-detail">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <div class="container">
+        <nav class="breadcrumb-nav">
+          <a routerLink="/" class="breadcrumb-link">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <a routerLink="/supplements" class="breadcrumb-link">Supplements</a>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">{{ supplement.name }}</span>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+      <div class="supplement-layout">
+        <!-- Left Column - Image and Basic Info -->
+        <div class="supplement-image-section">
+          <div class="image-container">
+            <img [src]="'assets/images/' + supplement.image" [alt]="supplement.name" class="supplement-image">
+            <div class="image-badge" [style.background-color]="category?.color">
+              {{ category?.icon }}
+            </div>
+          </div>
+
+          <div class="quick-info">
+            <div class="rating-section">
+              <div class="rating-stars">★★★★★</div>
+              <div class="rating-details">
+                <span class="rating-value">{{ supplement.rating }}</span>
+                <span class="rating-count">({{ supplement.reviews }} reviews)</span>
+              </div>
+            </div>
+
+            <div class="price-section">
+              <span class="price">{{ formatPrice(supplement.price) }}</span>
+              <span class="price-period">one-time purchase</span>
+            </div>
+
+            <div class="stock-status" [class.in-stock]="supplement.inStock">
+              {{ supplement.inStock ? '✓ In Stock' : '✗ Out of Stock' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Details and Purchase -->
+        <div class="supplement-details-section">
+          <div class="supplement-header">
+            <div class="category-tag" [style.background-color]="category?.color + '20'">
+              <span class="category-icon">{{ category?.icon }}</span>
+              <span class="category-name">{{ category?.name }}</span>
+            </div>
+            <h1 class="supplement-title">{{ supplement.name }}</h1>
+            <p class="supplement-subtitle">{{ supplement.shortDescription }}</p>
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs-section">
+            <div class="tabs-nav">
+              <button 
+                class="tab-button" 
+                [class.active]="selectedTab === 'overview'"
+                (click)="selectTab('overview')">
+                Overview
+              </button>
+              <button 
+                class="tab-button" 
+                [class.active]="selectedTab === 'science'"
+                (click)="selectTab('science')">
+                Science
+              </button>
+              <button 
+                class="tab-button" 
+                [class.active]="selectedTab === 'usage'"
+                (click)="selectTab('usage')">
+                Usage
+              </button>
+              <button 
+                class="tab-button" 
+                [class.active]="selectedTab === 'safety'"
+                (click)="selectTab('safety')">
+                Safety
+              </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+              <!-- Overview Tab -->
+              <div *ngIf="selectedTab === 'overview'" class="tab-panel">
+                <div class="description-section">
+                  <h3>Description</h3>
+                  <p>{{ supplement.fullDescription }}</p>
+                </div>
+
+                <div class="benefits-section">
+                  <h3>Key Benefits</h3>
+                  <div class="benefits-list">
+                    <div *ngFor="let benefit of supplement.benefits" class="benefit-item">
+                      <span class="benefit-icon">✓</span>
+                      <span class="benefit-text">{{ benefit }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ingredients-section">
+                  <h3>Ingredients</h3>
+                  <div class="ingredients-list">
+                    <span *ngFor="let ingredient of supplement.ingredients" class="ingredient-tag">
+                      {{ ingredient }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Science Tab -->
+              <div *ngIf="selectedTab === 'science'" class="tab-panel">
+                <div class="scientific-evidence">
+                  <h3>Scientific Evidence</h3>
+                  <p class="evidence-intro">
+                    Every claim is backed by peer-reviewed research. Here's the science behind {{ supplement.name }}:
+                  </p>
+
+                  <div class="studies-list">
+                    <div *ngFor="let study of supplement.scientificEvidence" class="study-item">
+                      <div class="study-header">
+                        <h4 class="study-title">{{ study.study }}</h4>
+                        <div class="study-meta">
+                          <span class="study-journal">{{ study.journal }}</span>
+                          <span class="study-year">{{ study.year }}</span>
+                        </div>
+                      </div>
+                      <div class="study-details">
+                        <div class="study-sample">
+                          <strong>Sample Size:</strong> {{ study.sampleSize }} participants
+                        </div>
+                        <div class="study-results">
+                          <strong>Results:</strong> {{ study.results }}
+                        </div>
+                        <a *ngIf="study.url" [href]="study.url" target="_blank" class="study-link">
+                          View Full Study →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Usage Tab -->
+              <div *ngIf="selectedTab === 'usage'" class="tab-panel">
+                <div class="usage-section">
+                  <h3>How to Use</h3>
+                  
+                  <div class="dosage-info">
+                    <div class="dosage-item">
+                      <span class="dosage-label">Amount:</span>
+                      <span class="dosage-value">{{ supplement.dosage.amount }}</span>
+                    </div>
+                    <div class="dosage-item">
+                      <span class="dosage-label">Frequency:</span>
+                      <span class="dosage-value">{{ supplement.dosage.frequency }}</span>
+                    </div>
+                    <div class="dosage-item">
+                      <span class="dosage-label">Timing:</span>
+                      <span class="dosage-value">{{ supplement.dosage.timing }}</span>
+                    </div>
+                    <div class="dosage-item">
+                      <span class="dosage-label">Duration:</span>
+                      <span class="dosage-value">{{ supplement.dosage.duration }}</span>
+                    </div>
+                  </div>
+
+                  <div class="when-to-take">
+                    <h4>When to Take</h4>
+                    <ul class="when-list">
+                      <li *ngFor="let when of supplement.whenToTake">{{ when }}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Safety Tab -->
+              <div *ngIf="selectedTab === 'safety'" class="tab-panel">
+                <div class="safety-section">
+                  <div class="when-not-to-take">
+                    <h3>When NOT to Take</h3>
+                    <ul class="warning-list">
+                      <li *ngFor="let warning of supplement.whenNotToTake" class="warning-item">
+                        <span class="warning-icon">⚠️</span>
+                        {{ warning }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="side-effects">
+                    <h3>Potential Side Effects</h3>
+                    <ul class="side-effects-list">
+                      <li *ngFor="let effect of supplement.sideEffects" class="side-effect-item">
+                        <span class="effect-icon">ℹ️</span>
+                        {{ effect }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="interactions">
+                    <h3>Drug Interactions</h3>
+                    <ul class="interactions-list">
+                      <li *ngFor="let interaction of supplement.interactions" class="interaction-item">
+                        <span class="interaction-icon">💊</span>
+                        {{ interaction }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Purchase Section -->
+          <div class="purchase-section">
+            <div class="quantity-selector">
+              <label class="quantity-label">Quantity:</label>
+              <div class="quantity-controls">
+                <button class="quantity-btn" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+                <span class="quantity-value">{{ quantity }}</span>
+                <button class="quantity-btn" (click)="increaseQuantity()">+</button>
+              </div>
+            </div>
+
+            <div class="total-price">
+              <span class="total-label">Total:</span>
+              <span class="total-value">{{ formatPrice(getTotalPrice()) }}</span>
+            </div>
+
+            <button 
+              class="btn btn-primary btn-large add-to-box-btn"
+              [disabled]="!supplement.inStock"
+              (click)="addToBox()">
+              <span *ngIf="supplement.inStock">Add to Box</span>
+              <span *ngIf="!supplement.inStock">Out of Stock</span>
+            </button>
+
+            <div class="purchase-notes">
+              <p class="note">
+                <strong>Note:</strong> This supplement will be included in your next monthly box. 
+                You can also purchase individual supplements separately.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

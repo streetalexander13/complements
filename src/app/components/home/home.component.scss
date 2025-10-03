@@ -824,14 +824,36 @@
 }
 
 @media (max-width: 480px) {
+  .hero-section {
+    padding: var(--space-xl) 0;
+  }
+
   .hero-content {
     .hero-title {
-      font-size: var(--text-3xl);
+      font-size: var(--text-2xl);
+      line-height: 1.3;
+    }
+
+    .hero-subtitle {
+      font-size: var(--text-sm);
+    }
+
+    .hero-stats {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    .stat-item {
+      padding: var(--space-md);
     }
   }
 
   .section-title {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
+  }
+
+  .box-card {
+    padding: var(--space-lg);
   }
 
   .box-card.featured {
@@ -841,4 +863,94 @@
       transform: translateY(-4px);
     }
   }
+
+  .btn {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-sm);
+  }
+
+  .problem-grid,
+  .solution-features,
+  .boxes-grid {
+    gap: var(--space-lg);
+  }
+
+  .testimonial {
+    padding: var(--space-lg);
+  }
+}
+
+/* Enhanced Button Animations */
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Card Hover Effects */
+.box-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    .box-image img {
+      transform: scale(1.05);
+    }
+
+    .box-badge {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.box-image img {
+  transition: transform 0.4s ease;
+}
+
+.box-badge {
+  transition: transform 0.3s ease;
+}
+
+/* Enhanced Stat Animations */
+.stat-item {
+  transition: all 0.3s ease;
+
+  &:hover {
+    .stat-number {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.stat-number {
+  transition: transform 0.3s ease;
+}
+
+/* Typing Animation Styles */
+.typing-text {
+  display: inline-block;
+  min-height: 1.2em;
 }

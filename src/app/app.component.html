@@ -1,21 +1,45 @@
 <div class="app-container">
-  <header class="app-header">
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <a routerLink="/" class="logo-link">
-            <span class="logo-text">EVIDENCE</span>
-          </a>
-        </div>
-            <nav class="main-nav">
+      <header class="app-header">
+        <div class="container">
+          <div class="header-content">
+            <div class="logo">
+              <a routerLink="/" class="logo-link">
+                <span class="logo-text">EVIDENCE</span>
+              </a>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <nav class="main-nav desktop-nav">
               <a routerLink="/" class="nav-link">Home</a>
               <a routerLink="/wizard" class="nav-link">Get Your Box</a>
-              <a routerLink="/products" class="nav-link">Box Contents</a>
+              <a routerLink="/supplements" class="nav-link">Supplements</a>
               <a routerLink="/research" class="nav-link">Science</a>
             </nav>
-      </div>
-    </div>
-  </header>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+            </button>
+          </div>
+
+          <!-- Mobile Navigation Overlay -->
+          <div class="mobile-nav-overlay" [class.open]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+          <!-- Mobile Navigation -->
+          <nav class="mobile-nav" [class.open]="isMobileMenuOpen">
+            <a routerLink="/" class="mobile-nav-link" (click)="closeMobileMenu()">Home</a>
+            <a routerLink="/wizard" class="mobile-nav-link" (click)="closeMobileMenu()">Get Your Box</a>
+            <a routerLink="/supplements" class="mobile-nav-link" (click)="closeMobileMenu()">Supplements</a>
+            <a routerLink="/research" class="mobile-nav-link" (click)="closeMobileMenu()">Science</a>
+            <div class="mobile-nav-auth">
+              <a routerLink="/login" class="mobile-nav-link auth-link" (click)="closeMobileMenu()">Login</a>
+              <a routerLink="/signup" class="mobile-nav-link auth-link primary" (click)="closeMobileMenu()">Sign Up</a>
+            </div>
+          </nav>
+        </div>
+      </header>
   
   <main class="app-main">
     <router-outlet></router-outlet>

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SupplementDataService } from '../../services/supplement-data.service';
 import { Supplement } from '../../models/supplement.model';
+import { TypingAnimationService } from '../../services/typing-animation.service';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,7 @@ import { Supplement } from '../../models/supplement.model';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   featuredSupplements: Supplement[] = [];
   stats = {
     studies: 0,
@@ -19,11 +20,18 @@ export class HomeComponent implements OnInit {
     customers: 0
   };
 
-  constructor(private supplementDataService: SupplementDataService) {}
+  constructor(
+    private supplementDataService: SupplementDataService,
+    private typingService: TypingAnimationService
+  ) {}
 
   ngOnInit(): void {
     this.loadFeaturedSupplements();
     this.calculateStats();
+  }
+
+  ngAfterViewInit(): void {
+    this.startAnimations();
   }
 
   private loadFeaturedSupplements(): void {
@@ -44,5 +52,33 @@ export class HomeComponent implements OnInit {
 
   formatPrice(price: number): string {
     return `$${price.toFixed(2)}`;
+  }
+
+  private async startAnimations(): Promise<void> {
+    // Check if we're in browser environment
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    // Wait a bit for the page to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Animate hero text
+    const heroText1 = document.getElementById('hero-text-1');
+    const heroText2 = document.getElementById('hero-text-2');
+    
+    if (heroText1) {
+      await this.typingService.typeTextWithCursor(heroText1, 'Stop Guessing.', 100);
+    }
+    
+    if (heroText2) {
+      await this.typingService.typeTextWithCursor(heroText2, 'Start Performing.', 100);
+    }
+
+    // Animate stats with stagger effect
+    const statItems = document.querySelectorAll('.stagger-item');
+    if (statItems.length > 0) {
+      await this.typingService.staggerText(Array.from(statItems) as HTMLElement[], 200);
+    }
   }
 }

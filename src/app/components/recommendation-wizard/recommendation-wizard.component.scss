@@ -541,7 +541,7 @@
 .sport-option {
   cursor: pointer;
 
-  input[type="radio"] {
+  input[type="checkbox"] {
     display: none;
   }
 
@@ -550,6 +550,7 @@
     border: 1px solid var(--gray-200);
     text-align: center;
     transition: all 0.2s ease;
+    cursor: pointer;
 
     &:hover {
       border-color: var(--black);
@@ -932,12 +933,90 @@
 }
 
 @media (max-width: 480px) {
+  .wizard-container {
+    padding: var(--space-md) 0;
+  }
+
+  .wizard-content {
+    padding: var(--space-lg);
+    margin: 0 var(--space-sm);
+  }
+
   .step-content {
     .step-header {
       .step-title {
-        font-size: var(--text-2xl);
+        font-size: var(--text-xl);
+        line-height: 1.3;
+      }
+
+      .step-description {
+        font-size: var(--text-sm);
       }
     }
+  }
+
+  .sport-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .sport-option {
+    .sport-card {
+      padding: var(--space-sm);
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .sport-icon {
+      font-size: var(--text-base);
+    }
+
+    .sport-label {
+      font-size: var(--text-xs);
+    }
+  }
+
+  .radio-group {
+    gap: var(--space-sm);
+  }
+
+  .radio-option {
+    padding: var(--space-sm);
+    font-size: var(--text-sm);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-lg);
+  }
+
+  .form-label {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: var(--space-sm) 0;
+    font-size: var(--text-sm);
+  }
+
+  .benefit-item {
+    .benefit-content h5 {
+      font-size: var(--text-sm);
+    }
+
+    .benefit-content p {
+      font-size: var(--text-xs);
+    }
+  }
+
+  .box-preview {
+    padding: var(--space-lg);
+  }
+
+  .success-content {
+    padding: var(--space-lg);
   }
 
   .journey-navigation {
@@ -946,6 +1025,7 @@
 
     .btn {
       width: 100%;
+      padding: var(--space-lg);
     }
   }
 }

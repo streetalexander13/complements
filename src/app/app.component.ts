@@ -1,13 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet, RouterModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'Evidence';
+  isMobileMenuOpen = false;
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    this.updateBodyScroll();
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+    this.updateBodyScroll();
+  }
+
+  private updateBodyScroll(): void {
+    if (typeof document !== 'undefined') {
+      if (this.isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    if (event.target.innerWidth > 768) {
+      this.isMobileMenuOpen = false;
+      this.updateBodyScroll();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Restore body scroll when component is destroyed
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
 }

@@ -1,0 +1,215 @@
+/* Login Component - Clinical Design */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  padding: var(--space-xl);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  padding: var(--space-3xl);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+
+  .auth-title {
+    font-size: var(--text-3xl);
+    font-weight: 300;
+    color: var(--black);
+    margin-bottom: var(--space-md);
+  }
+
+  .auth-subtitle {
+    font-size: var(--text-base);
+    color: var(--gray-600);
+    margin: 0;
+  }
+}
+
+.auth-form {
+  .form-group {
+    margin-bottom: var(--space-xl);
+
+    .form-label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--black);
+      margin-bottom: var(--space-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: var(--space-md) 0;
+      border: none;
+      border-bottom: 1px solid var(--gray-300);
+      background: transparent;
+      font-size: var(--text-base);
+      color: var(--black);
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-bottom-color: var(--black);
+        transform: translateY(-1px);
+      }
+
+      &.error {
+        border-bottom-color: var(--red-500);
+      }
+
+      &::placeholder {
+        color: var(--gray-400);
+        transition: color 0.3s ease;
+      }
+
+      &:focus::placeholder {
+        color: var(--gray-500);
+      }
+    }
+
+    .error-message {
+      font-size: var(--text-xs);
+      color: var(--red-500);
+      margin-top: var(--space-xs);
+    }
+  }
+
+  .auth-error {
+    background: var(--red-50);
+    border: 1px solid var(--red-200);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--red-600);
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: var(--space-lg);
+  }
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: var(--space-3xl);
+
+  .auth-switch {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+    margin-bottom: var(--space-xl);
+
+    .auth-link {
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .demo-credentials {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    padding: var(--space-md);
+    font-size: var(--text-xs);
+    color: var(--gray-600);
+
+    .demo-label {
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
+    }
+
+    .demo-text {
+      margin: 0;
+      font-family: monospace;
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: var(--space-lg);
+    min-height: calc(100vh - 80px);
+  }
+
+  .auth-card {
+    padding: var(--space-xl);
+    margin: var(--space-lg) 0;
+  }
+
+  .auth-title {
+    font-size: var(--text-2xl);
+  }
+
+  .auth-subtitle {
+    font-size: var(--text-base);
+  }
+
+  .form-input {
+    padding: var(--space-md) 0;
+    font-size: var(--text-base);
+  }
+
+  .btn {
+    padding: var(--space-lg) var(--space-xl);
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: var(--space-md);
+  }
+
+  .auth-card {
+    padding: var(--space-lg);
+    margin: var(--space-md) 0;
+  }
+
+  .auth-title {
+    font-size: var(--text-xl);
+  }
+
+  .auth-subtitle {
+    font-size: var(--text-sm);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-lg);
+  }
+
+  .form-label {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .form-input {
+    padding: var(--space-sm) 0;
+    font-size: var(--text-sm);
+  }
+
+  .btn {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-sm);
+    width: 100%;
+  }
+
+  .auth-footer {
+    text-align: center;
+  }
+}

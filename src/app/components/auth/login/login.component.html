@@ -1,0 +1,60 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to manage your subscription</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input 
+          type="email" 
+          formControlName="email" 
+          class="form-input"
+          placeholder="Enter your email"
+          [class.error]="getFieldError('email')">
+        <div class="error-message" *ngIf="getFieldError('email')">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input 
+          type="password" 
+          formControlName="password" 
+          class="form-input"
+          placeholder="Enter your password"
+          [class.error]="getFieldError('password')">
+        <div class="error-message" *ngIf="getFieldError('password')">
+          {{ getFieldError('password') }}
+        </div>
+      </div>
+
+      <div class="error-message auth-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-large"
+        [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Sign In</span>
+        <span *ngIf="isLoading">Signing In...</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p class="auth-switch">
+        Don't have an account? 
+        <a routerLink="/signup" class="auth-link">Sign up</a>
+      </p>
+      <div class="demo-credentials">
+        <p class="demo-label">Demo credentials:</p>
+        <p class="demo-text">Email: demo&#64;complements.com</p>
+        <p class="demo-text">Password: demo123</p>
+      </div>
+    </div>
+  </div>
+</div>

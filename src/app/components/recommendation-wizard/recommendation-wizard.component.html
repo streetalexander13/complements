@@ -67,65 +67,33 @@
             <div class="step-badge">
               <span class="badge-text">Sport Customization</span>
             </div>
-            <h1 class="step-title">What's your main sport?</h1>
-            <p class="step-description">We'll customize your box with sport-specific equipment and supplements that actually work</p>
+            <h1 class="step-title">What sports do you do?</h1>
+            <p class="step-description">Select all that apply. We'll customize your box with sport-specific equipment and supplements.</p>
           </div>
           
           <form [formGroup]="wizardForm" class="journey-form">
             <div class="form-group">
-              <label class="form-label">Primary sport or activity</label>
+              <label class="form-label">Sports and activities</label>
               <div class="sport-grid">
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="running">
+                <label *ngFor="let sport of sports" class="sport-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isSportSelected(sport.value)"
+                    (change)="onSportChange(sport.value, $event)">
                   <div class="sport-card">
-                    <div class="sport-icon">🏃‍♀️</div>
-                    <span class="sport-label">Running</span>
-                  </div>
-                </label>
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="climbing">
-                  <div class="sport-card">
-                    <div class="sport-icon">🧗‍♀️</div>
-                    <span class="sport-label">Climbing</span>
-                  </div>
-                </label>
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="cycling">
-                  <div class="sport-card">
-                    <div class="sport-icon">🚴‍♀️</div>
-                    <span class="sport-label">Cycling</span>
-                  </div>
-                </label>
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="weightlifting">
-                  <div class="sport-card">
-                    <div class="sport-icon">🏋️‍♀️</div>
-                    <span class="sport-label">Weightlifting</span>
-                  </div>
-                </label>
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="yoga">
-                  <div class="sport-card">
-                    <div class="sport-icon">🧘‍♀️</div>
-                    <span class="sport-label">Yoga</span>
-                  </div>
-                </label>
-                <label class="sport-option">
-                  <input type="radio" formControlName="primarySport" value="crossfit">
-                  <div class="sport-card">
-                    <div class="sport-icon">💪</div>
-                    <span class="sport-label">CrossFit</span>
+                    <div class="sport-icon">{{ sport.icon }}</div>
+                    <span class="sport-label">{{ sport.label }}</span>
                   </div>
                 </label>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">How active are you?</label>
+              <label class="form-label">How many times do you train per week?</label>
               <div class="radio-group">
-                <label *ngFor="let level of activityLevels" class="radio-option">
-                  <input type="radio" formControlName="activityLevel" [value]="level">
-                  <span class="radio-label">{{ formatActivityLabel(level) }}</span>
+                <label *ngFor="let frequency of trainingFrequencies" class="radio-option">
+                  <input type="radio" formControlName="trainingFrequency" [value]="frequency">
+                  <span class="radio-label">{{ frequency }}</span>
                 </label>
               </div>
             </div>
@@ -294,18 +262,32 @@
                       <p>Flexibility and mobility work</p>
                     </div>
                   </div>
-                  <div class="benefit-item" *ngIf="wizardForm.get('primarySport')?.value === 'climbing'">
+                  <div class="benefit-item" *ngIf="isSportSelected('climbing')">
                     <span class="benefit-icon">🧗‍♀️</span>
                     <div class="benefit-content">
                       <h5>Climbing Chalk</h5>
                       <p>Improves grip, reduces skin tears</p>
                     </div>
                   </div>
-                  <div class="benefit-item" *ngIf="wizardForm.get('primarySport')?.value === 'running'">
+                  <div class="benefit-item" *ngIf="isSportSelected('running')">
                     <span class="benefit-icon">🏃‍♀️</span>
                     <div class="benefit-content">
                       <h5>Resistance Bands</h5>
                       <p>Strength training for runners</p>
+                    </div>
+                  </div>
+                  <div class="benefit-item" *ngIf="isSportSelected('swimming')">
+                    <span class="benefit-icon">🏊‍♀️</span>
+                    <div class="benefit-content">
+                      <h5>Swim Cap</h5>
+                      <p>Reduces drag, protects hair</p>
+                    </div>
+                  </div>
+                  <div class="benefit-item" *ngIf="isSportSelected('tennis')">
+                    <span class="benefit-icon">🎾</span>
+                    <div class="benefit-content">
+                      <h5>Tennis Grip Tape</h5>
+                      <p>Better racket control and comfort</p>
                     </div>
                   </div>
                 </div>
@@ -371,8 +353,8 @@
                   <div class="benefit-item">
                     <span class="benefit-icon">📚</span>
                     <div class="benefit-content">
-                      <h5>{{ getPrimarySport() }}-specific warm-up</h5>
-                      <p>Prevent injuries, improve performance</p>
+                      <h5>Sport-specific warm-up guides</h5>
+                      <p>Prevent injuries, improve performance for {{ getSportsList() }}</p>
                     </div>
                   </div>
                   <div class="benefit-item">
@@ -479,7 +461,7 @@
             <strong>Box Level:</strong> {{ getSelectedLevel() }}
           </div>
           <div class="detail-item">
-            <strong>Sport Focus:</strong> {{ getPrimarySport() }}
+            <strong>Sports:</strong> {{ getSportsList() }}
           </div>
           <div class="detail-item">
             <strong>Monthly Price:</strong> {{ getBoxPrice() }}

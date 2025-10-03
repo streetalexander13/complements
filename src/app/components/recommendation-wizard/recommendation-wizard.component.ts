@@ -25,6 +25,24 @@ export class RecommendationWizardComponent implements OnInit {
   healthGoals = Object.values(HealthGoal);
   activityLevels = Object.values(ActivityLevel);
   dietTypes = Object.values(DietType);
+  trainingFrequencies = [
+    '1-2 times per week',
+    '3-4 times per week', 
+    '5-6 times per week',
+    'Daily (7+ times per week)'
+  ];
+  sports = [
+    { value: 'running', label: 'Running', icon: '🏃‍♀️' },
+    { value: 'climbing', label: 'Climbing', icon: '🧗‍♀️' },
+    { value: 'cycling', label: 'Cycling', icon: '🚴‍♀️' },
+    { value: 'weightlifting', label: 'Weightlifting', icon: '🏋️‍♀️' },
+    { value: 'yoga', label: 'Yoga', icon: '🧘‍♀️' },
+    { value: 'crossfit', label: 'CrossFit', icon: '💪' },
+    { value: 'swimming', label: 'Swimming', icon: '🏊‍♀️' },
+    { value: 'tennis', label: 'Tennis', icon: '🎾' },
+    { value: 'basketball', label: 'Basketball', icon: '🏀' },
+    { value: 'football', label: 'Football', icon: '⚽' }
+  ];
   budgetRanges = Object.values(BudgetRange);
 
   constructor(
@@ -33,6 +51,7 @@ export class RecommendationWizardComponent implements OnInit {
   ) {
     this.wizardForm = this.createForm();
   }
+
 
   ngOnInit(): void {}
 
@@ -43,8 +62,8 @@ export class RecommendationWizardComponent implements OnInit {
       gender: ['', Validators.required],
       
       // Step 2: Sport & Activity
-      primarySport: ['', Validators.required],
-      activityLevel: ['', Validators.required],
+      sports: [[], Validators.required],
+      trainingFrequency: ['', Validators.required],
       
       // Step 3: Goals & Level
       fitnessLevel: ['', Validators.required],
@@ -189,13 +208,16 @@ export class RecommendationWizardComponent implements OnInit {
       case 1:
         return !!(this.wizardForm.get('age')?.valid && this.wizardForm.get('gender')?.valid);
       case 2:
-        return !!(this.wizardForm.get('activityLevel')?.valid && this.wizardForm.get('primaryGoals')?.valid);
+        const sports = this.wizardForm.get('sports')?.value || [];
+        const trainingFreq = this.wizardForm.get('trainingFrequency')?.value;
+        console.log('Step 2 validation:', { sports, sportsLength: sports.length, trainingFreq, sportsValid: sports.length > 0, trainingValid: !!trainingFreq });
+        return !!(sports.length > 0 && trainingFreq);
       case 3:
-        return true; // Optional step
+        return !!(this.wizardForm.get('fitnessLevel')?.valid && this.wizardForm.get('primaryGoals')?.valid);
       case 4:
         return !!this.wizardForm.get('dietType')?.valid;
       case 5:
-        return !!this.wizardForm.get('budget')?.valid;
+        return true; // Health & Medical step is optional
       case 6:
         return this.wizardForm.valid;
       default:
@@ -248,16 +270,43 @@ export class RecommendationWizardComponent implements OnInit {
   }
 
   getPrimarySport(): string {
-    const sport = this.wizardForm.get('primarySport')?.value;
-    const sports = {
-      'running': 'Running',
-      'climbing': 'Climbing',
-      'cycling': 'Cycling',
-      'weightlifting': 'Weightlifting',
-      'yoga': 'Yoga',
-      'crossfit': 'CrossFit'
-    };
-    return sports[sport as keyof typeof sports] || 'Fitness';
+    const sports = this.wizardForm.get('sports')?.value || [];
+    if (sports.length === 0) return 'Fitness';
+    if (sports.length === 1) {
+      const sport = this.sports.find(s => s.value === sports[0]);
+      return sport?.label || 'Fitness';
+    }
+    return `${sports.length} Sports`;
+  }
+
+  getSportsList(): string {
+    const sports = this.wizardForm.get('sports')?.value || [];
+    return sports.map((sport: string) => {
+      const sportObj = this.sports.find(s => s.value === sport);
+      return sportObj?.label || sport;
+    }).join(', ');
+  }
+
+  onSportChange(sport: string, event: any): void {
+    const currentSports = this.wizardForm.get('sports')?.value || [];
+    if (event.target.checked) {
+      const newSports = [...currentSports, sport];
+      this.wizardForm.patchValue({
+        sports: newSports
+      });
+    } else {
+      const newSports = currentSports.filter((s: string) => s !== sport);
+      this.wizardForm.patchValue({
+        sports: newSports
+      });
+    }
+    // Trigger validation update
+    this.wizardForm.get('sports')?.updateValueAndValidity();
+  }
+
+  isSportSelected(sport: string): boolean {
+    const sports = this.wizardForm.get('sports')?.value || [];
+    return sports.includes(sport);
   }
 
   getDietType(): string {

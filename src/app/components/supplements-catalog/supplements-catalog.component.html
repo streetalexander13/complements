@@ -1,0 +1,158 @@
+<div class="catalog-container">
+  <!-- Header Section -->
+  <section class="catalog-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-badge">
+          <span class="badge-text">Evidence-Based Supplements</span>
+        </div>
+        <h1 class="catalog-title">
+          <span class="typing-text" id="catalog-title">Complete Supplement Library</span>
+        </h1>
+        <p class="catalog-subtitle">
+          Every supplement backed by science. Every benefit proven by research.<br>
+          <strong>Transparency you can trust.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search and Filter Section -->
+  <section class="catalog-filters">
+    <div class="container">
+      <div class="filters-content">
+        <div class="search-section">
+          <div class="search-input-wrapper">
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery"
+              (input)="onSearchChange()"
+              placeholder="Search supplements, benefits, or ingredients..."
+              class="search-input">
+            <span class="search-icon">🔍</span>
+          </div>
+        </div>
+
+        <div class="category-filters">
+          <button 
+            class="category-filter" 
+            [class.active]="selectedCategory === 'all'"
+            (click)="onCategorySelect('all')">
+            All Supplements
+          </button>
+          <button 
+            *ngFor="let category of categories" 
+            class="category-filter"
+            [class.active]="selectedCategory === category.id"
+            (click)="onCategorySelect(category.id)">
+            <span class="category-icon">{{ category.icon }}</span>
+            {{ category.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="container">
+      <div class="loading-content">
+        <div class="loading-shimmer loading-card"></div>
+        <div class="loading-shimmer loading-card"></div>
+        <div class="loading-shimmer loading-card"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplements Grid -->
+  <section *ngIf="!isLoading" class="supplements-section">
+    <div class="container">
+      <div class="supplements-grid">
+        <div 
+          *ngFor="let supplement of filteredSupplements; let i = index" 
+          class="supplement-card stagger-item hover-lift"
+          [routerLink]="['/supplement', supplement.id]">
+          
+          <div class="card-image">
+            <img [src]="'assets/images/' + supplement.image" [alt]="supplement.name" loading="lazy">
+            <div class="card-badge" [style.background-color]="getCategoryById(supplement.category)?.color">
+              {{ getCategoryById(supplement.category)?.icon }}
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="card-header">
+              <h3 class="supplement-name">{{ supplement.name }}</h3>
+              <div class="supplement-rating">
+                <span class="rating-stars">★★★★★</span>
+                <span class="rating-value">{{ supplement.rating }}</span>
+                <span class="rating-count">({{ supplement.reviews }})</span>
+              </div>
+            </div>
+
+            <p class="supplement-description">{{ supplement.shortDescription }}</p>
+
+            <div class="supplement-benefits">
+              <div *ngFor="let benefit of supplement.benefits.slice(0, 2)" class="benefit-item">
+                <span class="benefit-icon">✓</span>
+                <span class="benefit-text">{{ benefit }}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="price-section">
+                <span class="price">{{ formatPrice(supplement.price) }}</span>
+                <span class="price-period">one-time</span>
+              </div>
+              <div class="stock-status" [class.in-stock]="supplement.inStock">
+                {{ supplement.inStock ? 'In Stock' : 'Out of Stock' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="filteredSupplements.length === 0" class="no-results">
+        <div class="no-results-content">
+          <span class="no-results-icon">🔍</span>
+          <h3>No supplements found</h3>
+          <p>Try adjusting your search or filter criteria</p>
+          <button class="btn btn-secondary" (click)="onCategorySelect('all'); searchQuery = ''">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Overview -->
+  <section class="categories-overview">
+    <div class="container">
+      <div class="section-header">
+        <h2>Browse by Category</h2>
+        <p>Find exactly what you need for your performance goals</p>
+      </div>
+
+      <div class="categories-grid">
+        <div 
+          *ngFor="let category of categories" 
+          class="category-card hover-scale"
+          [routerLink]="['/supplements', 'category', category.id]">
+          
+          <div class="category-icon-large" [style.background-color]="category.color + '20'">
+            <span class="category-emoji">{{ category.icon }}</span>
+          </div>
+          
+          <div class="category-content">
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-description">{{ category.description }}</p>
+            <div class="category-count">
+              {{ getSupplementsByCategory(category.id).length }} supplements
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
