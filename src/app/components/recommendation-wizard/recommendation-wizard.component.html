@@ -31,6 +31,16 @@
           
           <form [formGroup]="wizardForm" class="journey-form">
             <div class="form-group">
+              <label class="form-label">What's your name?</label>
+              <input 
+                type="text" 
+                formControlName="name" 
+                class="form-input"
+                placeholder="Enter your name"
+                minlength="2">
+            </div>
+
+            <div class="form-group">
               <label class="form-label">How old are you?</label>
               <input 
                 type="number" 

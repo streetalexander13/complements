@@ -15,7 +15,9 @@ export class AppComponent implements OnDestroy {
   isMobileMenuOpen = false;
 
   toggleMobileMenu(): void {
+    console.log('Mobile menu toggled, current state:', this.isMobileMenuOpen);
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    console.log('Mobile menu new state:', this.isMobileMenuOpen);
     this.updateBodyScroll();
   }
 

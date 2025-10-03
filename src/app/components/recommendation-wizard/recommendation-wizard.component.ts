@@ -58,6 +58,7 @@ export class RecommendationWizardComponent implements OnInit {
   private createForm(): FormGroup {
     return this.fb.group({
       // Step 1: Basic Info
+      name: ['', [Validators.required, Validators.minLength(2)]],
       age: [25, [Validators.required, Validators.min(13), Validators.max(120)]],
       gender: ['', Validators.required],
       
@@ -206,11 +207,10 @@ export class RecommendationWizardComponent implements OnInit {
   isStepValid(step: number): boolean {
     switch (step) {
       case 1:
-        return !!(this.wizardForm.get('age')?.valid && this.wizardForm.get('gender')?.valid);
+        return !!(this.wizardForm.get('name')?.valid && this.wizardForm.get('age')?.valid && this.wizardForm.get('gender')?.valid);
       case 2:
         const sports = this.wizardForm.get('sports')?.value || [];
         const trainingFreq = this.wizardForm.get('trainingFrequency')?.value;
-        console.log('Step 2 validation:', { sports, sportsLength: sports.length, trainingFreq, sportsValid: sports.length > 0, trainingValid: !!trainingFreq });
         return !!(sports.length > 0 && trainingFreq);
       case 3:
         return !!(this.wizardForm.get('fitnessLevel')?.valid && this.wizardForm.get('primaryGoals')?.valid);
@@ -230,6 +230,10 @@ export class RecommendationWizardComponent implements OnInit {
     return goals.map((g: HealthGoal) => this.formatGoalLabel(g)).join(', ');
   }
 
+  getUserName(): string {
+    return this.wizardForm.get('name')?.value || 'there';
+  }
+
   formatPrice(price: number): string {
     return `$${price.toFixed(2)}`;
   }
@@ -247,16 +251,6 @@ export class RecommendationWizardComponent implements OnInit {
     }
   }
 
-  getUserName(): string {
-    const gender = this.wizardForm.get('gender')?.value;
-    const names = {
-      'male': ['Alex', 'James', 'Tom', 'Mike', 'Chris'],
-      'female': ['Maddy', 'Sarah', 'Emma', 'Lisa', 'Kate'],
-      'other': ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey']
-    };
-    const nameList = names[gender as keyof typeof names] || names.other;
-    return nameList[Math.floor(Math.random() * nameList.length)];
-  }
 
   getSelectedLevel(): string {
     const level = this.wizardForm.get('fitnessLevel')?.value;

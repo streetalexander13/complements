@@ -61,24 +61,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     // Wait a bit for the page to load
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Animate hero text
     const heroText1 = document.getElementById('hero-text-1');
     const heroText2 = document.getElementById('hero-text-2');
     
     if (heroText1) {
-      await this.typingService.typeTextWithCursor(heroText1, 'Stop Guessing.', 100);
+      await this.typingService.typeTextWithCursor(heroText1, 'Stop Guessing.', 60);
     }
     
     if (heroText2) {
-      await this.typingService.typeTextWithCursor(heroText2, 'Start Performing.', 100);
+      await this.typingService.typeTextWithCursor(heroText2, 'Start Performing.', 60);
     }
 
     // Animate stats with stagger effect
     const statItems = document.querySelectorAll('.stagger-item');
     if (statItems.length > 0) {
-      await this.typingService.staggerText(Array.from(statItems) as HTMLElement[], 200);
+      await this.typingService.staggerText(Array.from(statItems) as HTMLElement[], 100);
     }
   }
 }
