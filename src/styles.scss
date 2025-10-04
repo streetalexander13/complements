@@ -68,7 +68,7 @@ p {
   line-height: 1.6;
 }
 
-/* Color Palette - Monochrome with minimal accents */
+/* Color Palette - Professional with clean accents */
 :root {
   --black: #000000;
   --white: #ffffff;
@@ -83,9 +83,31 @@ p {
   --gray-100: #f5f5f5;
   --gray-50: #fafafa;
   
-  /* Minimal accent - very subtle */
-  --accent: #1a1a1a;
-  --accent-light: #404040;
+  /* Professional accent colors - Refined and subtle */
+  --primary: #2563eb;        /* Professional blue */
+  --primary-light: #3b82f6;  /* Lighter blue */
+  --primary-dark: #1d4ed8;   /* Darker blue */
+  --primary-50: #f0f7ff;     /* Very subtle blue tint */
+  --primary-100: #e0f2fe;    /* Subtle blue tint */
+  
+  --secondary: #059669;      /* Professional green */
+  --secondary-light: #10b981; /* Lighter green */
+  --secondary-dark: #047857;  /* Darker green */
+  --secondary-50: #f0fdf4;   /* Very subtle green tint */
+  --secondary-100: #dcfce7;  /* Subtle green tint */
+  
+  --accent: #7c3aed;         /* Professional purple */
+  --accent-light: #8b5cf6;   /* Lighter purple */
+  --accent-dark: #6d28d9;    /* Darker purple */
+  --accent-50: #faf5ff;      /* Very subtle purple tint */
+  --accent-100: #f3e8ff;     /* Subtle purple tint */
+  
+  /* Warm accent for highlights - Refined */
+  --warm: #dc2626;           /* Professional red */
+  --warm-light: #ef4444;     /* Lighter red */
+  --warm-dark: #b91c1c;      /* Darker red */
+  --warm-50: #fef2f2;        /* Very subtle warm tint */
+  --warm-100: #fee2e2;       /* Subtle warm tint */
   
   /* Spacing scale */
   --space-xs: 0.25rem;
@@ -330,6 +352,28 @@ p {
 .bg-gray-50 { background-color: var(--gray-50); }
 .bg-gray-100 { background-color: var(--gray-100); }
 
+/* Professional background utilities */
+.bg-primary { background-color: var(--primary); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-primary-dark { background-color: var(--primary-dark); }
+.bg-primary-50 { background-color: var(--primary-50); }
+.bg-primary-100 { background-color: var(--primary-100); }
+.bg-secondary { background-color: var(--secondary); }
+.bg-secondary-light { background-color: var(--secondary-light); }
+.bg-secondary-dark { background-color: var(--secondary-dark); }
+.bg-secondary-50 { background-color: var(--secondary-50); }
+.bg-secondary-100 { background-color: var(--secondary-100); }
+.bg-accent { background-color: var(--accent); }
+.bg-accent-light { background-color: var(--accent-light); }
+.bg-accent-dark { background-color: var(--accent-dark); }
+.bg-accent-50 { background-color: var(--accent-50); }
+.bg-accent-100 { background-color: var(--accent-100); }
+.bg-warm { background-color: var(--warm); }
+.bg-warm-light { background-color: var(--warm-light); }
+.bg-warm-dark { background-color: var(--warm-dark); }
+.bg-warm-50 { background-color: var(--warm-50); }
+.bg-warm-100 { background-color: var(--warm-100); }
+
 /* Text color utilities */
 .text-black { color: var(--black); }
 .text-white { color: var(--white); }
@@ -339,6 +383,20 @@ p {
 .text-gray-600 { color: var(--gray-600); }
 .text-gray-500 { color: var(--gray-500); }
 .text-gray-400 { color: var(--gray-400); }
+
+/* Professional color utilities */
+.text-primary { color: var(--primary); }
+.text-primary-light { color: var(--primary-light); }
+.text-primary-dark { color: var(--primary-dark); }
+.text-secondary { color: var(--secondary); }
+.text-secondary-light { color: var(--secondary-light); }
+.text-secondary-dark { color: var(--secondary-dark); }
+.text-accent { color: var(--accent); }
+.text-accent-light { color: var(--accent-light); }
+.text-accent-dark { color: var(--accent-dark); }
+.text-warm { color: var(--warm); }
+.text-warm-light { color: var(--warm-light); }
+.text-warm-dark { color: var(--warm-dark); }
 
 /* Button base styles - The Ordinary inspired */
 .btn {
@@ -370,22 +428,36 @@ p {
   }
   
   &.btn-primary {
-    background: var(--black);
+    background: var(--primary);
     color: var(--white);
+    border-color: var(--primary);
     
     &:hover {
-      background: var(--gray-800);
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
     }
   }
   
   &.btn-secondary {
     background: transparent;
-    color: var(--black);
-    border-color: var(--gray-300);
+    color: var(--primary);
+    border-color: var(--primary);
     
     &:hover {
-      background: var(--gray-50);
-      border-color: var(--black);
+      background: var(--primary-50);
+      border-color: var(--primary-dark);
+      color: var(--primary-dark);
+    }
+  }
+  
+  &.btn-accent {
+    background: var(--secondary);
+    color: var(--white);
+    border-color: var(--secondary);
+    
+    &:hover {
+      background: var(--secondary-dark);
+      border-color: var(--secondary-dark);
     }
   }
   
@@ -666,9 +738,10 @@ p {
   transition: all 0.6s ease;
 }
 
-.stagger-item.animate {
-  opacity: 1;
-  transform: translateY(0);
+.stagger-item.animate,
+.stagger-item[style*="opacity: 1"] {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 /* Loading States */

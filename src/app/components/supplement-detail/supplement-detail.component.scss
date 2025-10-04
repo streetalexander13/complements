@@ -146,32 +146,6 @@
   border: 1px solid var(--gray-200);
 }
 
-.rating-section {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.rating-stars {
-  color: #fbbf24;
-  font-size: var(--text-lg);
-}
-
-.rating-details {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.rating-value {
-  font-weight: 600;
-  color: var(--black);
-}
-
-.rating-count {
-  font-size: var(--text-sm);
-  color: var(--gray-600);
-}
 
 .price-section {
   display: flex;

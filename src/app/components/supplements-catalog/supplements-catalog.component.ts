@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupplementCatalogService, SupplementCategory, SupplementDetail } from '../../services/supplement-catalog.service';
+import { TypingAnimationService } from '../../services/typing-animation.service';
 
 @Component({
   selector: 'app-supplements-catalog',
@@ -11,7 +12,7 @@ import { SupplementCatalogService, SupplementCategory, SupplementDetail } from '
   templateUrl: './supplements-catalog.component.html',
   styleUrls: ['./supplements-catalog.component.scss']
 })
-export class SupplementsCatalogComponent implements OnInit {
+export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
   categories: SupplementCategory[] = [];
   supplements: SupplementDetail[] = [];
   filteredSupplements: SupplementDetail[] = [];
@@ -19,10 +20,17 @@ export class SupplementsCatalogComponent implements OnInit {
   searchQuery: string = '';
   isLoading = false;
 
-  constructor(private supplementCatalogService: SupplementCatalogService) {}
+  constructor(
+    private supplementCatalogService: SupplementCatalogService,
+    private typingService: TypingAnimationService
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  ngAfterViewInit(): void {
+    this.startAnimations();
   }
 
   loadData(): void {
@@ -77,5 +85,21 @@ export class SupplementsCatalogComponent implements OnInit {
 
   getSupplementsByCategory(categoryId: string): SupplementDetail[] {
     return this.supplements.filter(supplement => supplement.category === categoryId);
+  }
+
+  private async startAnimations(): Promise<void> {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    // Wait for data to load
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Animate supplement cards with stagger effect
+    const supplementCards = document.querySelectorAll('.supplement-card.stagger-item');
+    if (supplementCards.length > 0) {
+      await this.typingService.staggerText(Array.from(supplementCards) as HTMLElement[], 100);
+    }
   }
 }

@@ -13,7 +13,7 @@
   <div *ngIf="!isLoading && !supplement" class="not-found">
     <div class="container">
       <div class="not-found-content">
-        <span class="not-found-icon">🔍</span>
+        <span class="not-found-icon">SEARCH</span>
         <h2>Supplement not found</h2>
         <p>The supplement you're looking for doesn't exist.</p>
         <button class="btn btn-primary" (click)="goBack()">Back to Supplements</button>
@@ -49,13 +49,6 @@
           </div>
 
           <div class="quick-info">
-            <div class="rating-section">
-              <div class="rating-stars">★★★★★</div>
-              <div class="rating-details">
-                <span class="rating-value">{{ supplement.rating }}</span>
-                <span class="rating-count">({{ supplement.reviews }} reviews)</span>
-              </div>
-            </div>
 
             <div class="price-section">
               <span class="price">{{ formatPrice(supplement.price) }}</span>
@@ -63,7 +56,7 @@
             </div>
 
             <div class="stock-status" [class.in-stock]="supplement.inStock">
-              {{ supplement.inStock ? '✓ In Stock' : '✗ Out of Stock' }}
+              {{ supplement.inStock ? 'In Stock' : 'Out of Stock' }}
             </div>
           </div>
         </div>
@@ -121,7 +114,7 @@
                   <h3>Key Benefits</h3>
                   <div class="benefits-list">
                     <div *ngFor="let benefit of supplement.benefits" class="benefit-item">
-                      <span class="benefit-icon">✓</span>
+                      <span class="benefit-icon">•</span>
                       <span class="benefit-text">{{ benefit }}</span>
                     </div>
                   </div>
@@ -210,7 +203,7 @@
                     <h3>When NOT to Take</h3>
                     <ul class="warning-list">
                       <li *ngFor="let warning of supplement.whenNotToTake" class="warning-item">
-                        <span class="warning-icon">⚠️</span>
+                        <span class="warning-icon">WARNING</span>
                         {{ warning }}
                       </li>
                     </ul>
@@ -220,7 +213,7 @@
                     <h3>Potential Side Effects</h3>
                     <ul class="side-effects-list">
                       <li *ngFor="let effect of supplement.sideEffects" class="side-effect-item">
-                        <span class="effect-icon">ℹ️</span>
+                        <span class="effect-icon">INFO</span>
                         {{ effect }}
                       </li>
                     </ul>
@@ -230,7 +223,7 @@
                     <h3>Drug Interactions</h3>
                     <ul class="interactions-list">
                       <li *ngFor="let interaction of supplement.interactions" class="interaction-item">
-                        <span class="interaction-icon">💊</span>
+                        <span class="interaction-icon">DRUG</span>
                         {{ interaction }}
                       </li>
                     </ul>

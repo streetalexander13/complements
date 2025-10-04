@@ -259,42 +259,42 @@
                 <h4>Equipment</h4>
                 <div class="benefit-list">
                   <div class="benefit-item">
-                    <span class="benefit-icon">🧘‍♀️</span>
+                    <span class="benefit-icon">YOGA</span>
                     <div class="benefit-content">
                       <h5>Foam Roller</h5>
                       <p>Recovery after training sessions</p>
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">🧗‍♀️</span>
+                    <span class="benefit-icon">CLIMB</span>
                     <div class="benefit-content">
                       <h5>Yoga Mat</h5>
                       <p>Flexibility and mobility work</p>
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="isSportSelected('climbing')">
-                    <span class="benefit-icon">🧗‍♀️</span>
+                    <span class="benefit-icon">CLIMB</span>
                     <div class="benefit-content">
                       <h5>Climbing Chalk</h5>
                       <p>Improves grip, reduces skin tears</p>
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="isSportSelected('running')">
-                    <span class="benefit-icon">🏃‍♀️</span>
+                    <span class="benefit-icon">RUN</span>
                     <div class="benefit-content">
                       <h5>Resistance Bands</h5>
                       <p>Strength training for runners</p>
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="isSportSelected('swimming')">
-                    <span class="benefit-icon">🏊‍♀️</span>
+                    <span class="benefit-icon">SWIM</span>
                     <div class="benefit-content">
                       <h5>Swim Cap</h5>
                       <p>Reduces drag, protects hair</p>
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="isSportSelected('tennis')">
-                    <span class="benefit-icon">🎾</span>
+                    <span class="benefit-icon">TENNIS</span>
                     <div class="benefit-content">
                       <h5>Tennis Grip Tape</h5>
                       <p>Better racket control and comfort</p>
@@ -307,7 +307,7 @@
                 <h4>Supplements</h4>
                 <div class="benefit-list">
                   <div class="benefit-item">
-                    <span class="benefit-icon">💪</span>
+                    <span class="benefit-icon">STRENGTH</span>
                     <div class="benefit-content">
                       <h5>Protein ({{ getDietType() }} blend)</h5>
                       <p><strong>5-15% faster muscle recovery</strong><br>
@@ -315,7 +315,7 @@
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">🦴</span>
+                    <span class="benefit-icon">JOINT</span>
                     <div class="benefit-content">
                       <h5>Vitamin D3 + K2</h5>
                       <p><strong>23% stronger bones</strong><br>
@@ -323,7 +323,7 @@
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">💧</span>
+                    <span class="benefit-icon">HYDRO</span>
                     <div class="benefit-content">
                       <h5>Electrolytes</h5>
                       <p><strong>23% better hydration</strong><br>
@@ -331,7 +331,7 @@
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="wizardForm.get('fitnessLevel')?.value === 'intermediate'">
-                    <span class="benefit-icon">🧠</span>
+                    <span class="benefit-icon">FOCUS</span>
                     <div class="benefit-content">
                       <h5>Omega-3</h5>
                       <p><strong>2-3x faster recovery</strong><br>
@@ -339,7 +339,7 @@
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="wizardForm.get('fitnessLevel')?.value === 'advanced'">
-                    <span class="benefit-icon">⚡</span>
+                    <span class="benefit-icon">PERF</span>
                     <div class="benefit-content">
                       <h5>Creatine Monohydrate</h5>
                       <p><strong>8-15% strength gains</strong><br>
@@ -347,7 +347,7 @@
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="wizardForm.get('fitnessLevel')?.value === 'elite'">
-                    <span class="benefit-icon">🏆</span>
+                    <span class="benefit-icon">ELITE</span>
                     <div class="benefit-content">
                       <h5>Beetroot Shot</h5>
                       <p><strong>12% more power output</strong><br>
@@ -361,28 +361,28 @@
                 <h4>Guides & Support</h4>
                 <div class="benefit-list">
                   <div class="benefit-item">
-                    <span class="benefit-icon">📚</span>
+                    <span class="benefit-icon">GUIDE</span>
                     <div class="benefit-content">
                       <h5>Sport-specific warm-up guides</h5>
                       <p>Prevent injuries, improve performance for {{ getSportsList() }}</p>
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">💤</span>
+                    <span class="benefit-icon">SLEEP</span>
                     <div class="benefit-content">
                       <h5>Sleep optimization guide</h5>
                       <p><strong>15% better sleep quality</strong></p>
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">🍽️</span>
+                    <span class="benefit-icon">NUTRITION</span>
                     <div class="benefit-content">
                       <h5>Nutrition timing guide</h5>
                       <p>When to eat for optimal performance</p>
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">📊</span>
+                    <span class="benefit-icon">TRACK</span>
                     <div class="benefit-content">
                       <h5>Performance tracking</h5>
                       <p>Measure your improvements monthly</p>
@@ -444,14 +444,14 @@
         
         <div class="success-benefits">
           <div class="benefit-highlight">
-            <span class="benefit-icon">📦</span>
+            <span class="benefit-icon">BOX</span>
             <div class="benefit-content">
               <h3>Monthly Performance Box</h3>
               <p>Supplements, equipment, and guides tailored to your sport</p>
             </div>
           </div>
           <div class="benefit-highlight">
-            <span class="benefit-icon">🔬</span>
+            <span class="benefit-icon">SCIENCE</span>
             <div class="benefit-content">
               <h3>Science-Backed Results</h3>
               <p>Every supplement backed by research with clear benefits</p>

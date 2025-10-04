@@ -36,8 +36,6 @@ export interface SupplementDetail {
   }[];
   price: number;
   image: string;
-  rating: number;
-  reviews: number;
   inStock: boolean;
   tags: string[];
 }
@@ -52,49 +50,49 @@ export class SupplementCatalogService {
       id: 'recovery',
       name: 'Recovery',
       description: 'Supplements to enhance muscle recovery and reduce inflammation',
-      icon: '🔄',
+      icon: 'REC',
       color: '#3B82F6'
     },
     {
       id: 'performance',
       name: 'Performance',
       description: 'Supplements to boost strength, power, and endurance',
-      icon: '⚡',
+      icon: 'PERF',
       color: '#10B981'
     },
     {
       id: 'health',
       name: 'Health & Wellness',
       description: 'Supplements for overall health and immune support',
-      icon: '💊',
+      icon: 'HEALTH',
       color: '#8B5CF6'
     },
     {
       id: 'sleep',
       name: 'Sleep & Recovery',
       description: 'Supplements to improve sleep quality and recovery',
-      icon: '😴',
+      icon: 'SLEEP',
       color: '#6366F1'
     },
     {
       id: 'joint',
       name: 'Joint & Bone',
       description: 'Supplements for joint health and bone strength',
-      icon: '🦴',
+      icon: 'JOINT',
       color: '#F59E0B'
     },
     {
       id: 'energy',
       name: 'Energy & Focus',
       description: 'Supplements for mental clarity and sustained energy',
-      icon: '🧠',
+      icon: 'FOCUS',
       color: '#EF4444'
     },
     {
       id: 'hydration',
       name: 'Hydration',
       description: 'Supplements for optimal hydration and electrolyte balance',
-      icon: '💧',
+      icon: 'HYDRO',
       color: '#06B6D4'
     }
   ];
@@ -161,8 +159,6 @@ export class SupplementCatalogService {
       ],
       price: 24.99,
       image: 'creatine.jpg',
-      rating: 4.8,
-      reviews: 1247,
       inStock: true,
       tags: ['strength', 'power', 'muscle', 'performance']
     },
@@ -215,9 +211,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 39.99,
-      image: 'whey-protein.jpg',
-      rating: 4.7,
-      reviews: 2156,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['protein', 'recovery', 'muscle', 'post-workout']
     },
@@ -270,9 +264,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 29.99,
-      image: 'omega3.jpg',
-      rating: 4.6,
-      reviews: 892,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['omega-3', 'inflammation', 'heart', 'brain', 'joints']
     },
@@ -325,9 +317,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 19.99,
-      image: 'vitamin-d3.jpg',
-      rating: 4.5,
-      reviews: 634,
+      image: 'vitamin-d3.png',
       inStock: true,
       tags: ['vitamin-d', 'bone', 'immune', 'strength', 'mood']
     },
@@ -380,9 +370,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 22.99,
-      image: 'magnesium.jpg',
-      rating: 4.4,
-      reviews: 456,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['magnesium', 'sleep', 'recovery', 'muscle', 'stress']
     },
@@ -435,9 +423,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 34.99,
-      image: 'probiotic.jpg',
-      rating: 4.3,
-      reviews: 723,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['probiotic', 'gut', 'immune', 'digestion', 'health']
     },
@@ -491,9 +477,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 27.99,
-      image: 'beta-alanine.jpg',
-      rating: 4.6,
-      reviews: 567,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['endurance', 'power', 'carnosine', 'fatigue', 'performance']
     },
@@ -546,9 +530,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 44.99,
-      image: 'collagen.jpg',
-      rating: 4.4,
-      reviews: 892,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['collagen', 'joints', 'skin', 'tendons', 'recovery']
     },
@@ -601,9 +583,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 18.99,
-      image: 'l-theanine.jpg',
-      rating: 4.5,
-      reviews: 634,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['theanine', 'sleep', 'stress', 'focus', 'relaxation']
     },
@@ -658,9 +638,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 16.99,
-      image: 'zinc.jpg',
-      rating: 4.3,
-      reviews: 445,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['zinc', 'immune', 'recovery', 'testosterone', 'healing']
     },
@@ -715,9 +693,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 32.99,
-      image: 'ashwagandha.jpg',
-      rating: 4.6,
-      reviews: 789,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['ashwagandha', 'stress', 'sleep', 'adaptogen', 'recovery']
     },
@@ -770,9 +746,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 28.99,
-      image: 'bcaa.jpg',
-      rating: 4.2,
-      reviews: 567,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['bcaa', 'amino-acids', 'recovery', 'endurance', 'muscle']
     },
@@ -826,9 +800,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 26.99,
-      image: 'turmeric.jpg',
-      rating: 4.4,
-      reviews: 678,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['turmeric', 'curcumin', 'inflammation', 'joints', 'antioxidant']
     },
@@ -881,9 +853,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 21.99,
-      image: 'electrolytes.jpg',
-      rating: 4.5,
-      reviews: 423,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['electrolytes', 'hydration', 'performance', 'cramps', 'endurance']
     },
@@ -938,9 +908,7 @@ export class SupplementCatalogService {
         }
       ],
       price: 19.99,
-      image: 'iron.jpg',
-      rating: 4.1,
-      reviews: 234,
+      image: 'whey-protein.png',
       inStock: true,
       tags: ['iron', 'energy', 'oxygen', 'anemia', 'endurance']
     }

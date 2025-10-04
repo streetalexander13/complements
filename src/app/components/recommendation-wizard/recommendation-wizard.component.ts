@@ -32,16 +32,16 @@ export class RecommendationWizardComponent implements OnInit {
     'Daily (7+ times per week)'
   ];
   sports = [
-    { value: 'running', label: 'Running', icon: '🏃‍♀️' },
-    { value: 'climbing', label: 'Climbing', icon: '🧗‍♀️' },
-    { value: 'cycling', label: 'Cycling', icon: '🚴‍♀️' },
-    { value: 'weightlifting', label: 'Weightlifting', icon: '🏋️‍♀️' },
-    { value: 'yoga', label: 'Yoga', icon: '🧘‍♀️' },
-    { value: 'crossfit', label: 'CrossFit', icon: '💪' },
-    { value: 'swimming', label: 'Swimming', icon: '🏊‍♀️' },
-    { value: 'tennis', label: 'Tennis', icon: '🎾' },
-    { value: 'basketball', label: 'Basketball', icon: '🏀' },
-    { value: 'football', label: 'Football', icon: '⚽' }
+    { value: 'running', label: 'Running', icon: 'RUN' },
+    { value: 'climbing', label: 'Climbing', icon: 'CLIMB' },
+    { value: 'cycling', label: 'Cycling', icon: 'CYCLE' },
+    { value: 'weightlifting', label: 'Weightlifting', icon: 'LIFT' },
+    { value: 'yoga', label: 'Yoga', icon: 'YOGA' },
+    { value: 'crossfit', label: 'CrossFit', icon: 'CROSSFIT' },
+    { value: 'swimming', label: 'Swimming', icon: 'SWIM' },
+    { value: 'tennis', label: 'Tennis', icon: 'TENNIS' },
+    { value: 'basketball', label: 'Basketball', icon: 'BASKET' },
+    { value: 'football', label: 'Football', icon: 'FOOTBALL' }
   ];
   budgetRanges = Object.values(BudgetRange);
 
@@ -257,8 +257,7 @@ export class RecommendationWizardComponent implements OnInit {
     const levels = {
       'beginner': 'Get Started',
       'intermediate': 'Build Your Base',
-      'advanced': 'Fuel & Recover Smarter',
-      'elite': 'Performance Maximiser'
+      'advanced': 'Fuel & Recover Smarter'
     };
     return levels[level as keyof typeof levels] || 'Get Started';
   }
@@ -320,8 +319,7 @@ export class RecommendationWizardComponent implements OnInit {
     const prices = {
       'beginner': '£29/month',
       'intermediate': '£39/month',
-      'advanced': '£49/month',
-      'elite': '£69/month'
+      'advanced': '£49/month'
     };
     return prices[level as keyof typeof prices] || '£29/month';
   }

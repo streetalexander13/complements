@@ -11,7 +11,7 @@ import { isBrowser } from './utils/browser.utils';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnDestroy {
-  title = 'Evidence';
+  title = 'With Complements';
   isMobileMenuOpen = false;
 
   toggleMobileMenu(): void {
