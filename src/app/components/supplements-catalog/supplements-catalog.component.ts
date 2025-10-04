@@ -47,6 +47,12 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
 
   onCategorySelect(categoryId: string): void {
     this.selectedCategory = categoryId;
+    
+    // Clear search query when switching to "all" category
+    if (categoryId === 'all') {
+      this.searchQuery = '';
+    }
+    
     this.filterSupplements();
   }
 
@@ -54,8 +60,14 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
     this.filterSupplements();
   }
 
+  clearFilters(): void {
+    this.selectedCategory = 'all';
+    this.searchQuery = '';
+    this.filterSupplements();
+  }
+
   filterSupplements(): void {
-    let filtered = this.supplements;
+    let filtered = [...this.supplements]; // Create a copy to avoid mutating original array
 
     // Filter by category
     if (this.selectedCategory !== 'all') {
@@ -63,8 +75,8 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
     }
 
     // Filter by search query
-    if (this.searchQuery.trim()) {
-      const query = this.searchQuery.toLowerCase();
+    if (this.searchQuery && this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(supplement => 
         supplement.name.toLowerCase().includes(query) ||
         supplement.tags.some(tag => tag.toLowerCase().includes(query)) ||
@@ -73,6 +85,9 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
     }
 
     this.filteredSupplements = filtered;
+    
+    // Trigger stagger animation for filtered results
+    this.animateFilteredResults();
   }
 
   getCategoryById(categoryId: string): SupplementCategory | undefined {
@@ -95,6 +110,19 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
 
     // Wait for data to load
     await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Animate supplement cards with stagger effect
+    this.animateFilteredResults();
+  }
+
+  private async animateFilteredResults(): Promise<void> {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    // Wait for DOM to update
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Animate supplement cards with stagger effect
     const supplementCards = document.querySelectorAll('.supplement-card.stagger-item');

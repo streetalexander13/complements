@@ -13,7 +13,7 @@
   <div *ngIf="!isLoading && !supplement" class="not-found">
     <div class="container">
       <div class="not-found-content">
-        <span class="not-found-icon">SEARCH</span>
+        <span class="not-found-icon material-icons">search_off</span>
         <h2>Supplement not found</h2>
         <p>The supplement you're looking for doesn't exist.</p>
         <button class="btn btn-primary" (click)="goBack()">Back to Supplements</button>
@@ -43,8 +43,8 @@
         <div class="supplement-image-section">
           <div class="image-container">
             <img [src]="'assets/images/' + supplement.image" [alt]="supplement.name" class="supplement-image">
-            <div class="image-badge" [style.background-color]="category?.color">
-              {{ category?.icon }}
+            <div class="image-badge" [style.background-color]="category?.color + '80'">
+              <span class="material-icons">{{ category?.icon }}</span>
             </div>
           </div>
 

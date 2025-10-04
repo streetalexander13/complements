@@ -554,12 +554,20 @@
 
     &:hover {
       border-color: var(--black);
+      
+      .sport-icon {
+        color: var(--primary);
+        transform: scale(1.1);
+      }
     }
   }
 
   .sport-icon {
-    font-size: var(--text-2xl);
+    font-size: 32px;
     margin-bottom: var(--space-sm);
+    color: var(--gray-600);
+    user-select: none;
+    transition: all 0.2s ease;
   }
 
   .sport-label {
@@ -569,8 +577,12 @@
   }
 
   input:checked + .sport-card {
-    border-color: var(--black);
-    background: var(--gray-50);
+    border-color: var(--primary);
+    background: var(--primary-50);
+    
+    .sport-icon {
+      color: var(--primary);
+    }
   }
 }
 
@@ -718,9 +730,10 @@
     }
 
     .benefit-icon {
-      font-size: var(--text-lg);
+      font-size: 20px;
       flex-shrink: 0;
       margin-top: var(--space-xs);
+      user-select: none;
     }
 
     .benefit-content {
@@ -814,8 +827,9 @@
     text-align: left;
 
     .benefit-icon {
-      font-size: var(--text-2xl);
+      font-size: 24px;
       flex-shrink: 0;
+      user-select: none;
     }
 
     .benefit-content {

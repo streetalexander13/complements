@@ -50,50 +50,50 @@ export class SupplementCatalogService {
       id: 'recovery',
       name: 'Recovery',
       description: 'Supplements to enhance muscle recovery and reduce inflammation',
-      icon: 'REC',
-      color: '#3B82F6'
+      icon: 'healing',
+      color: '#1E40AF'
     },
     {
       id: 'performance',
       name: 'Performance',
       description: 'Supplements to boost strength, power, and endurance',
-      icon: 'PERF',
-      color: '#10B981'
+      icon: 'trending_up',
+      color: '#059669'
     },
     {
       id: 'health',
       name: 'Health & Wellness',
       description: 'Supplements for overall health and immune support',
-      icon: 'HEALTH',
-      color: '#8B5CF6'
+      icon: 'health_and_safety',
+      color: '#6B21A8'
     },
     {
       id: 'sleep',
       name: 'Sleep & Recovery',
       description: 'Supplements to improve sleep quality and recovery',
-      icon: 'SLEEP',
-      color: '#6366F1'
+      icon: 'bedtime',
+      color: '#4338CA'
     },
     {
       id: 'joint',
       name: 'Joint & Bone',
       description: 'Supplements for joint health and bone strength',
-      icon: 'JOINT',
-      color: '#F59E0B'
+      icon: 'accessibility',
+      color: '#B45309'
     },
     {
       id: 'energy',
       name: 'Energy & Focus',
       description: 'Supplements for mental clarity and sustained energy',
-      icon: 'FOCUS',
-      color: '#EF4444'
+      icon: 'psychology',
+      color: '#B91C1C'
     },
     {
       id: 'hydration',
       name: 'Hydration',
       description: 'Supplements for optimal hydration and electrolyte balance',
-      icon: 'HYDRO',
-      color: '#06B6D4'
+      icon: 'water_drop',
+      color: '#0E7490'
     }
   ];
 

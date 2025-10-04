@@ -63,7 +63,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Wait a bit for the page to load
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    // Animate hero text
+    // Make hero stats visible immediately
+    this.makeHeroStatsVisible();
+
+    // Animate hero text in parallel
+    this.animateHeroText();
+  }
+
+  private makeHeroStatsVisible(): void {
+    const statItems = document.querySelectorAll('.hero-stat-item');
+    statItems.forEach((item, index) => {
+      setTimeout(() => {
+        (item as HTMLElement).classList.add('visible');
+      }, index * 150); // Stagger by 150ms each
+    });
+  }
+
+  private async animateHeroText(): Promise<void> {
     const heroText1 = document.getElementById('hero-text-1');
     const heroText2 = document.getElementById('hero-text-2');
     
@@ -73,12 +89,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     if (heroText2) {
       await this.typingService.typeTextWithCursor(heroText2, 'Start Performing.', 60);
-    }
-
-    // Animate stats with stagger effect
-    const statItems = document.querySelectorAll('.stagger-item');
-    if (statItems.length > 0) {
-      await this.typingService.staggerText(Array.from(statItems) as HTMLElement[], 100);
     }
   }
 }

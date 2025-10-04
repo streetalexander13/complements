@@ -29,7 +29,7 @@
               (input)="onSearchChange()"
               placeholder="Search supplements, benefits, or ingredients..."
               class="search-input">
-            <span class="search-icon">SEARCH</span>
+            <span class="search-icon material-icons">search</span>
           </div>
         </div>
 
@@ -45,7 +45,7 @@
             class="category-filter"
             [class.active]="selectedCategory === category.id"
             (click)="onCategorySelect(category.id)">
-            <span class="category-icon">{{ category.icon }}</span>
+            <span class="category-icon material-icons">{{ category.icon }}</span>
             {{ category.name }}
           </button>
         </div>
@@ -75,8 +75,8 @@
           
           <div class="card-image">
             <img [src]="'assets/images/' + supplement.image" [alt]="supplement.name" loading="lazy">
-            <div class="card-badge" [style.background-color]="getCategoryById(supplement.category)?.color">
-              {{ getCategoryById(supplement.category)?.icon }}
+            <div class="card-badge" [style.background-color]="getCategoryById(supplement.category)?.color + '80'">
+              <span class="material-icons">{{ getCategoryById(supplement.category)?.icon }}</span>
             </div>
           </div>
 
@@ -110,10 +110,10 @@
       <!-- No Results -->
       <div *ngIf="filteredSupplements.length === 0" class="no-results">
         <div class="no-results-content">
-          <span class="no-results-icon">SEARCH</span>
+          <span class="no-results-icon material-icons">search_off</span>
           <h3>No supplements found</h3>
           <p>Try adjusting your search or filter criteria</p>
-          <button class="btn btn-secondary" (click)="onCategorySelect('all'); searchQuery = ''">
+          <button class="btn btn-secondary" (click)="clearFilters()">
             Clear Filters
           </button>
         </div>
@@ -136,7 +136,7 @@
           [routerLink]="['/supplements', 'category', category.id]">
           
           <div class="category-icon-large" [style.background-color]="category.color + '20'">
-            <span class="category-emoji">{{ category.icon }}</span>
+            <span class="category-emoji material-icons">{{ category.icon }}</span>
           </div>
           
           <div class="category-content">

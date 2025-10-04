@@ -35,18 +35,18 @@
       line-height: 1;
       
       .logo-line-1 {
-        font-size: var(--text-lg);
-        font-weight: 300;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        margin-bottom: 2px;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: none;
+        margin-bottom: 1px;
       }
       
       .logo-line-2 {
-        font-size: var(--text-xl);
-        font-weight: 300;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
+        font-size: var(--text-2xl);
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: none;
       }
     }
   }
@@ -134,19 +134,19 @@
     margin-bottom: var(--space-sm);
     
     .footer-logo-line-1 {
-      font-size: var(--text-base);
-      font-weight: 300;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: none;
       color: var(--black);
       margin-bottom: 1px;
     }
     
     .footer-logo-line-2 {
       font-size: var(--text-lg);
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: none;
       color: var(--black);
     }
   }

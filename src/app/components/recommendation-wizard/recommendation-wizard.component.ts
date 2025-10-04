@@ -32,16 +32,16 @@ export class RecommendationWizardComponent implements OnInit {
     'Daily (7+ times per week)'
   ];
   sports = [
-    { value: 'running', label: 'Running', icon: 'RUN' },
-    { value: 'climbing', label: 'Climbing', icon: 'CLIMB' },
-    { value: 'cycling', label: 'Cycling', icon: 'CYCLE' },
-    { value: 'weightlifting', label: 'Weightlifting', icon: 'LIFT' },
-    { value: 'yoga', label: 'Yoga', icon: 'YOGA' },
-    { value: 'crossfit', label: 'CrossFit', icon: 'CROSSFIT' },
-    { value: 'swimming', label: 'Swimming', icon: 'SWIM' },
-    { value: 'tennis', label: 'Tennis', icon: 'TENNIS' },
-    { value: 'basketball', label: 'Basketball', icon: 'BASKET' },
-    { value: 'football', label: 'Football', icon: 'FOOTBALL' }
+    { value: 'running', label: 'Running', icon: 'directions_run' },
+    { value: 'climbing', label: 'Climbing', icon: 'scaling' },
+    { value: 'cycling', label: 'Cycling', icon: 'directions_bike' },
+    { value: 'weightlifting', label: 'Weightlifting', icon: 'fitness_center' },
+    { value: 'yoga', label: 'Yoga', icon: 'self_improvement' },
+    { value: 'crossfit', label: 'CrossFit', icon: 'sports_martial_arts' },
+    { value: 'swimming', label: 'Swimming', icon: 'pool' },
+    { value: 'tennis', label: 'Tennis', icon: 'sports_tennis' },
+    { value: 'basketball', label: 'Basketball', icon: 'sports_basketball' },
+    { value: 'football', label: 'Football', icon: 'sports_football' }
   ];
   budgetRanges = Object.values(BudgetRange);
 

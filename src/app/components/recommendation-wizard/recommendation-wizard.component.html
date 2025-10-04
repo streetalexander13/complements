@@ -91,7 +91,7 @@
                     [checked]="isSportSelected(sport.value)"
                     (change)="onSportChange(sport.value, $event)">
                   <div class="sport-card">
-                    <div class="sport-icon">{{ sport.icon }}</div>
+                    <div class="sport-icon material-icons">{{ sport.icon }}</div>
                     <span class="sport-label">{{ sport.label }}</span>
                   </div>
                 </label>
@@ -315,7 +315,7 @@
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">JOINT</span>
+                    <span class="benefit-icon material-icons">accessibility</span>
                     <div class="benefit-content">
                       <h5>Vitamin D3 + K2</h5>
                       <p><strong>23% stronger bones</strong><br>
@@ -323,7 +323,7 @@
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">HYDRO</span>
+                    <span class="benefit-icon material-icons">water_drop</span>
                     <div class="benefit-content">
                       <h5>Electrolytes</h5>
                       <p><strong>23% better hydration</strong><br>
@@ -331,7 +331,7 @@
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="wizardForm.get('fitnessLevel')?.value === 'intermediate'">
-                    <span class="benefit-icon">FOCUS</span>
+                    <span class="benefit-icon material-icons">psychology</span>
                     <div class="benefit-content">
                       <h5>Omega-3</h5>
                       <p><strong>2-3x faster recovery</strong><br>
@@ -339,7 +339,7 @@
                     </div>
                   </div>
                   <div class="benefit-item" *ngIf="wizardForm.get('fitnessLevel')?.value === 'advanced'">
-                    <span class="benefit-icon">PERF</span>
+                    <span class="benefit-icon material-icons">trending_up</span>
                     <div class="benefit-content">
                       <h5>Creatine Monohydrate</h5>
                       <p><strong>8-15% strength gains</strong><br>
@@ -368,7 +368,7 @@
                     </div>
                   </div>
                   <div class="benefit-item">
-                    <span class="benefit-icon">SLEEP</span>
+                    <span class="benefit-icon material-icons">bedtime</span>
                     <div class="benefit-content">
                       <h5>Sleep optimization guide</h5>
                       <p><strong>15% better sleep quality</strong></p>
