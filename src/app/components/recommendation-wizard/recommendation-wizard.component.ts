@@ -156,6 +156,33 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  private getThinkingTime(question: any): number {
+    if (!question) return 800; // Default for review section
+    
+    // Simple questions - very quick response
+    if (question.type === 'text' || question.type === 'number') {
+      return 400; // 0.4 seconds for basic input questions
+    }
+    
+    // Radio button questions - quick response
+    if (question.type === 'radio') {
+      return 600; // 0.6 seconds for single choice questions
+    }
+    
+    // Complex questions - longer thinking time
+    if (question.type === 'sports' || question.type === 'goals') {
+      return 1200; // 1.2 seconds for multi-select questions
+    }
+    
+    // Fitness level and other complex questions
+    if (question.type === 'fitnessLevel' || question.type === 'textarea') {
+      return 1000; // 1 second for complex questions
+    }
+    
+    // Default for any other question types
+    return 800; // 0.8 seconds default
+  }
+
   private initializeQuestions(): void {
     this.questions = [
       {
@@ -309,7 +336,10 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       this.isThinking = true;
       this.shouldScrollToBottom = true;
       
-      // Simulate thinking time
+      // Simulate thinking time based on question complexity
+      const nextQuestion = this.questions[this.currentQuestion + 1];
+      const thinkingTime = this.getThinkingTime(nextQuestion);
+      
       setTimeout(() => {
         this.currentQuestion++;
         this.isThinking = false;
@@ -324,7 +354,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         }
         
         this.shouldScrollToBottom = true;
-      }, 1500);
+      }, thinkingTime);
     } else {
       // Show review
       this.showReview = true;
@@ -761,6 +791,14 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   isSportSelected(sport: string): boolean {
     const sports = this.wizardForm.get('sports')?.value || [];
     return sports.includes(sport);
+  }
+
+  getAllSports(): any[] {
+    const allSports: any[] = [];
+    this.sportGroups.forEach(group => {
+      allSports.push(...group.sports);
+    });
+    return allSports;
   }
 
   getDietType(): string {

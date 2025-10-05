@@ -108,23 +108,16 @@
 
         <!-- Sports Selection -->
         <div *ngIf="getCurrentQuestion()?.type === 'sports'" class="sports-selection">
-          <div class="sport-groups-compact">
-            <div *ngFor="let group of sportGroups" class="sport-group-compact">
-              <div class="group-header-compact">
-                <span class="group-icon material-icons">{{ group.icon }}</span>
-                <span class="group-title">{{ group.name }}</span>
-              </div>
-              <div class="sport-row">
-                <button 
-                  *ngFor="let sport of group.sports" 
-                  class="sport-btn"
-                  [class.selected]="isSportSelected(sport.value)"
-                  (click)="answerQuestion(sport.value)">
-                  <div class="sport-icon material-icons">{{ sport.icon }}</div>
-                  <span class="sport-label">{{ sport.label }}</span>
-                </button>
-              </div>
-            </div>
+          <div class="sport-options">
+            <button 
+              *ngFor="let sport of getAllSports(); let i = index" 
+              class="sport-btn"
+              [class.selected]="isSportSelected(sport.value)"
+              (click)="answerQuestion(sport.value)"
+              [style.animation-delay.ms]="i * 100">
+              <span class="sport-icon material-icons">{{ sport.icon }}</span>
+              <span class="sport-label">{{ sport.label }}</span>
+            </button>
           </div>
           <button 
             class="continue-btn"

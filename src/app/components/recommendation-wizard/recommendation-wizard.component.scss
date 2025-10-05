@@ -1,19 +1,21 @@
-/* Chatbot Wizard - Modern Chat Interface */
+/* Chatbot Wizard - Professional Design */
 
 .chatbot-wizard {
   min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, 
-    #667eea 0%, 
-    #764ba2 25%, 
-    #f093fb 50%, 
-    #f5576c 75%, 
-    #4facfe 100%);
+    var(--primary-50) 0%, 
+    var(--white) 25%, 
+    var(--white) 50%, 
+    var(--white) 75%, 
+    var(--accent-50) 100%);
   background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background-attachment: fixed;
+  animation: gradientShift 20s ease infinite;
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden; // Prevent page scrolling
   position: relative;
 
   &::before {
@@ -26,6 +28,17 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     z-index: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--white);
+    z-index: 0;
   }
 
   > * {
@@ -72,16 +85,14 @@
   .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, 
-      #667eea 0%, 
-      #764ba2 25%, 
-      #f093fb 50%, 
-      #f5576c 75%, 
-      #4facfe 100%);
+      var(--primary) 0%, 
+      var(--secondary) 50%, 
+      var(--accent) 100%);
     background-size: 200% 100%;
-    animation: progressGradient 3s ease infinite;
+    animation: progressGradient 4s ease infinite;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 3px;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
   }
 }
 
@@ -111,6 +122,8 @@
   margin: 0 auto;
   padding: var(--space-2xl);
   height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
+  min-height: calc(100vh - 120px);
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -119,15 +132,46 @@
   margin-bottom: var(--space-lg);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  position: relative;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-lg) 0;
+  overflow-x: hidden;
+  padding: var(--space-lg) var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  min-height: 0;
+  max-height: 100%;
+  height: 100%;
+  
+  /* Custom Scrollbar Styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+  }
+  
+  /* Firefox Scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.6) rgba(255, 255, 255, 0.1);
 }
 
 /* Message Styles */
@@ -141,6 +185,8 @@
   transform: translateY(20px);
   opacity: 0;
   animation-fill-mode: forwards;
+  margin: var(--space-xs) 0;
+  flex-shrink: 0;
 
   &.bot-message {
     align-self: flex-start;
@@ -169,20 +215,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: var(--white);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    animation: avatarPulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    animation: avatarPulse 3s ease-in-out infinite;
     transition: all 0.3s ease;
 
     &:hover {
       transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     }
 
     &.user {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+      box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
     }
 
     .material-icons {
@@ -198,6 +244,7 @@
 
 .message-content {
   flex: 1;
+  min-width: 0;
 
   .message-text {
     background: rgba(255, 255, 255, 0.9);
@@ -211,6 +258,9 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 
     &:hover {
       transform: translateY(-2px);
@@ -264,20 +314,20 @@
     height: 10px;
     border-radius: 50%;
     animation: thinkingGradient 1.4s infinite ease-in-out;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    background: var(--primary);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 
     &:nth-child(1) { 
       animation-delay: -0.32s;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary);
     }
     &:nth-child(2) { 
       animation-delay: -0.16s;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: var(--secondary);
     }
     &:nth-child(3) { 
       animation-delay: 0s;
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      background: var(--accent);
     }
   }
 }
@@ -295,18 +345,21 @@
 
 @keyframes buttonPulse {
   0%, 100% { 
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
   }
   50% { 
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
   }
 }
 
 /* Question Input Area */
 .question-input {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
   padding-top: var(--space-lg);
   width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .input-container {
@@ -354,7 +407,7 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: var(--white);
       border: none;
       display: flex;
@@ -362,15 +415,15 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      animation: buttonPulse 2s ease-in-out infinite;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      animation: buttonPulse 3s ease-in-out infinite;
       flex-shrink: 0;
       align-self: center;
 
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
         transform: scale(1.1) translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
       }
 
       &:active:not(:disabled) {
@@ -417,8 +470,8 @@
     animation-fill-mode: forwards;
 
     &:hover {
-      border-color: rgba(102, 126, 234, 0.5);
-      background: rgba(102, 126, 234, 0.1);
+      border-color: var(--primary);
+      background: var(--primary-50);
       transform: translateX(0) translateY(-2px);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
@@ -450,86 +503,85 @@
 /* Sports Selection */
 .sports-selection {
   width: 100%;
+  overflow: visible;
   
-  .sport-groups-compact {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+  .sport-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-sm);
     margin-bottom: var(--space-lg);
     width: 100%;
-  }
-
-  .sport-group-compact {
-    .group-header-compact {
-      display: flex;
-      align-items: center;
-      gap: var(--space-xs);
-      margin-bottom: var(--space-sm);
-      padding: var(--space-xs) var(--space-sm);
-      background: var(--gray-50);
-      border-radius: 4px;
-
-      .group-icon {
-        color: var(--gray-600);
-        font-size: 16px;
-      }
-
-      .group-title {
-        font-size: var(--text-xs);
-        font-weight: 500;
-        color: var(--black);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin: 0;
-      }
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: visible;
+    padding: var(--space-xs);
+    
+    /* Custom Scrollbar for Sports Grid */
+    &::-webkit-scrollbar {
+      width: 4px;
     }
-  }
-
-  .sport-row {
-    display: flex;
-    gap: var(--space-sm);
-    overflow-x: auto;
-    padding-bottom: var(--space-xs);
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.6) rgba(255, 255, 255, 0.1);
   }
 
   .sport-btn {
-    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-xs);
     padding: var(--space-sm);
-    min-width: 80px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    color: var(--black);
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 60px;
+    justify-content: center;
+    margin: var(--space-xs);
 
     &:hover {
-      border-color: rgba(102, 126, 234, 0.5);
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary);
+      background: var(--primary-50);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
     }
 
     &.selected {
-      border-color: rgba(102, 126, 234, 0.8);
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+      border-color: var(--primary);
+      background: var(--primary-100);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
 
     .sport-icon {
-      font-size: 20px;
+      font-size: 18px;
       color: var(--gray-600);
     }
 
     .sport-label {
       font-size: var(--text-xs);
       color: var(--black);
-      text-align: center;
       line-height: 1.2;
+      text-align: center;
     }
 
     &.selected {
@@ -542,7 +594,7 @@
   .continue-btn {
     width: 100%;
     padding: var(--space-md);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: var(--white);
     border: none;
     border-radius: 12px;
@@ -550,13 +602,13 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    animation: buttonPulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    animation: buttonPulse 3s ease-in-out infinite;
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     }
 
     &:active:not(:disabled) {
@@ -828,6 +880,8 @@
 /* Review Section */
 .review-section {
   width: 100%;
+  flex-shrink: 0;
+  overflow-y: auto;
   
   .box-preview {
     background: rgba(255, 255, 255, 0.9);
@@ -971,18 +1025,78 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .progress-container .progress-content {
-    padding: 0 var(--space-lg);
+  .chatbot-wizard {
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Prevent mobile viewport issues */
+    height: 100dvh; // Dynamic viewport height
+    min-height: 100dvh;
+    /* Ensure gradient covers full height */
+    background-size: 400% 400%;
+    background-attachment: scroll; // Use scroll for mobile
+  }
+
+  .progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: var(--space-sm) 0;
+    height: 60px;
+    
+    .progress-content {
+      padding: 0 var(--space-lg);
+    }
   }
   
   .chat-container {
-    padding: var(--space-lg);
-    height: calc(100vh - 100px);
+    padding: 0;
+    height: 100dvh; // Dynamic viewport height
+    max-height: 100dvh;
+    min-height: 100dvh;
     max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding-top: 60px; // Account for fixed progress bar
+    padding-bottom: 0; // Remove bottom padding to allow input to be visible
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-messages {
+    padding: var(--space-md) var(--space-sm);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
   }
 
   .message {
     max-width: 95%;
+    margin: var(--space-xs) 0;
+  }
+
+  .question-input {
+    position: relative;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    padding: var(--space-md);
+    margin: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 200;
+    min-height: 80px;
+    max-height: 80px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 100%;
   }
 
   .goal-ranking-container {
@@ -995,14 +1109,16 @@
     gap: var(--space-md);
   }
 
-  .sport-row {
+  .sport-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--space-xs);
-    padding-bottom: var(--space-sm);
+    max-height: 250px;
   }
 
   .sport-btn {
-    min-width: 70px;
+    min-width: 80px;
     padding: var(--space-xs);
+    margin: var(--space-xs);
   }
 
   .box-contents {
@@ -1012,17 +1128,32 @@
 }
 
 @media (max-width: 480px) {
-  .progress-container .progress-content {
-    padding: 0 var(--space-md);
+  .progress-container {
+    height: 50px;
+    
+    .progress-content {
+      padding: 0 var(--space-md);
+    }
   }
   
   .chat-container {
-    padding: var(--space-md);
-    max-width: 100%;
+    padding-top: 50px; // Smaller progress bar on small screens
+    padding-bottom: 0; // Remove bottom padding
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-messages {
+    padding: var(--space-sm);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
   }
 
   .message {
     max-width: 98%;
+    margin: var(--space-xs) 0;
   }
 
   .message-avatar .avatar-circle {
@@ -1037,18 +1168,42 @@
   .message-content .message-text {
     padding: var(--space-sm) var(--space-md);
     font-size: var(--text-sm);
+    min-height: 40px;
+  }
+
+  .question-input {
+    padding: var(--space-sm);
+    min-height: 70px;
+    max-height: 70px;
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+  }
+
+  .input-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 
   .input-container .input-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+
     .text-input,
     .textarea-input {
       padding: var(--space-sm) var(--space-md);
       font-size: var(--text-sm);
+      height: 44px;
+      flex: 1;
     }
 
     .send-btn {
       width: 40px;
       height: 40px;
+      flex-shrink: 0;
 
       .material-icons {
         font-size: 18px;
@@ -1056,9 +1211,15 @@
     }
   }
 
+  .sport-options {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    max-height: 200px;
+  }
+
   .sport-btn {
-    min-width: 60px;
+    min-width: 70px;
     padding: var(--space-xs);
+    margin: var(--space-xs);
     
     .sport-label {
       font-size: 10px;
