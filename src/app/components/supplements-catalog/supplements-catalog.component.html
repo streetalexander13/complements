@@ -71,7 +71,7 @@
         <div 
           *ngFor="let supplement of filteredSupplements; let i = index" 
           class="supplement-card stagger-item hover-lift"
-          [routerLink]="['/supplement', supplement.id]">
+          (click)="onSupplementClick(supplement)">
           
           <div class="card-image">
             <img [src]="'assets/images/' + supplement.image" [alt]="supplement.name" loading="lazy">
@@ -99,8 +99,8 @@
                 <span class="price">{{ formatPrice(supplement.price) }}</span>
                 <span class="price-period">one-time</span>
               </div>
-              <div class="stock-status" [class.in-stock]="supplement.inStock">
-                {{ supplement.inStock ? 'In Stock' : 'Out of Stock' }}
+              <div class="card-actions">
+                <span class="view-details-hint">Click to view details</span>
               </div>
             </div>
           </div>

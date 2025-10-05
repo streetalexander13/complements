@@ -142,6 +142,20 @@
 .category-icon {
   font-size: 18px;
   user-select: none;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
 }
 
 /* Loading State */
@@ -211,6 +225,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'liga';
+      font-size: 20px;
+      color: var(--white);
+    }
+    
     font-size: 18px;
     color: var(--white);
     white-space: nowrap;
@@ -278,6 +312,19 @@
   align-items: center;
   padding-top: var(--space-md);
   border-top: 1px solid var(--gray-200);
+}
+
+.card-actions {
+  .view-details-hint {
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+    font-style: italic;
+    text-align: center;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--gray-50);
+    border-radius: 4px;
+    border: 1px solid var(--gray-200);
+  }
 }
 
 .price-section {

@@ -65,7 +65,7 @@
         <div class="supplement-details-section">
           <div class="supplement-header">
             <div class="category-tag" [style.background-color]="category?.color + '20'">
-              <span class="category-icon">{{ category?.icon }}</span>
+              <span class="category-icon material-icons">{{ category?.icon }}</span>
               <span class="category-name">{{ category?.name }}</span>
             </div>
             <h1 class="supplement-title">{{ supplement.name }}</h1>
@@ -138,8 +138,48 @@
                     Every claim is backed by peer-reviewed research. Here's the science behind {{ supplement.name }}:
                   </p>
 
+                  <!-- Study Statistics -->
+                  <div class="study-stats">
+                    <div class="stat-item">
+                      <span class="stat-number">{{ supplement.scientificEvidence.length }}</span>
+                      <span class="stat-label">Total Studies</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">{{ getMetaAnalysisCount() }}</span>
+                      <span class="stat-label">Meta-Analyses</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">{{ getHighCredibilityCount() }}</span>
+                      <span class="stat-label">High Credibility (90%+)</span>
+                    </div>
+                  </div>
+
+                  <!-- Study Filters -->
+                  <div class="study-filters">
+                    <div class="filter-group">
+                      <label>Filter by Study Type:</label>
+                      <select [(ngModel)]="selectedStudyType" (change)="filterStudies()">
+                        <option value="all">All Study Types</option>
+                        <option value="meta-analysis">Meta-Analysis</option>
+                        <option value="systematic-review">Systematic Review</option>
+                        <option value="rct">Randomized Controlled Trial</option>
+                        <option value="cohort">Cohort Study</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Studies List -->
                   <div class="studies-list">
-                    <div *ngFor="let study of supplement.scientificEvidence" class="study-item">
+                    <div *ngFor="let study of getDisplayedStudies()" class="study-item" 
+                         [class.highlighted]="study.credibilityScore >= 90">
+                      
+                      <!-- Credibility Badge -->
+                      <div class="credibility-badge" [class]="'credibility-' + study.credibility">
+                        <span class="credibility-icon">{{ getCredibilityIcon(study.credibility) }}</span>
+                        <span class="credibility-text">{{ getCredibilityLabel(study.credibility) }}</span>
+                        <span class="credibility-score">{{ study.credibilityScore }}%</span>
+                      </div>
+
                       <div class="study-header">
                         <h4 class="study-title">{{ study.study }}</h4>
                         <div class="study-meta">
@@ -147,6 +187,19 @@
                           <span class="study-year">{{ study.year }}</span>
                         </div>
                       </div>
+
+                      <!-- Effect Size Display -->
+                      <div class="effect-display">
+                        <div class="effect-size">
+                          <span class="effect-label">Effect Size:</span>
+                          <span class="effect-value">{{ study.effectSize }}</span>
+                        </div>
+                        <div class="study-type">
+                          <span class="type-label">Study Type:</span>
+                          <span class="type-value">{{ study.studyType }}</span>
+                        </div>
+                      </div>
+
                       <div class="study-details">
                         <div class="study-sample">
                           <strong>Sample Size:</strong> {{ study.sampleSize }} participants
@@ -154,11 +207,24 @@
                         <div class="study-results">
                           <strong>Results:</strong> {{ study.results }}
                         </div>
+                        <div class="study-benefit">
+                          <strong>Key Benefit:</strong> {{ study.keyBenefit }}
+                        </div>
                         <a *ngIf="study.url" [href]="study.url" target="_blank" class="study-link">
                           View Full Study →
                         </a>
                       </div>
                     </div>
+                  </div>
+
+                  <!-- Show More/Less Button -->
+                  <div class="studies-toggle" *ngIf="supplement.scientificEvidence.length > 3">
+                    <button class="btn btn-secondary" (click)="toggleShowAll()">
+                      <span class="btn-text">
+                        {{ showAllStudies ? 'Show Less Studies' : 'Show All ' + supplement.scientificEvidence.length + ' Studies' }}
+                      </span>
+                      <span class="btn-arrow" [class.rotated]="showAllStudies">↓</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -263,6 +329,27 @@
                 You can also purchase individual supplements separately.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Survey Recommendation Section -->
+    <div class="survey-recommendation">
+      <div class="container">
+        <div class="recommendation-content">
+          <div class="recommendation-text">
+            <h3>Not sure if this supplement is right for you?</h3>
+            <p>Take our quick survey to get personalized recommendations based on your sport, goals, and training intensity.</p>
+          </div>
+          <div class="recommendation-actions">
+            <a routerLink="/wizard" class="btn btn-primary">
+              <span class="btn-text">Take Our Survey</span>
+              <span class="btn-arrow">→</span>
+            </a>
+            <a routerLink="/supplements" class="btn btn-secondary">
+              <span class="btn-text">Browse All Supplements</span>
+            </a>
           </div>
         </div>
       </div>

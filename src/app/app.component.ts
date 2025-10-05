@@ -1,7 +1,8 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { isBrowser } from './utils/browser.utils';
+import { CartService } from './services/cart.service';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +11,18 @@ import { isBrowser } from './utils/browser.utils';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'With Complements';
   isMobileMenuOpen = false;
+  cartItemCount = 0;
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.cartService.cartItems$.subscribe(items => {
+      this.cartItemCount = this.cartService.getCartItemCount();
+    });
+  }
 
   toggleMobileMenu(): void {
     console.log('Mobile menu toggled, current state:', this.isMobileMenuOpen);

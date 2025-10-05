@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupplementCatalogService, SupplementCategory, SupplementDetail } from '../../services/supplement-catalog.service';
 import { TypingAnimationService } from '../../services/typing-animation.service';
@@ -22,7 +22,8 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
 
   constructor(
     private supplementCatalogService: SupplementCatalogService,
-    private typingService: TypingAnimationService
+    private typingService: TypingAnimationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +98,14 @@ export class SupplementsCatalogComponent implements OnInit, AfterViewInit {
   formatPrice(price: number): string {
     return `$${price.toFixed(2)}`;
   }
+
+  onSupplementClick(supplement: SupplementDetail): void {
+    console.log('Supplement clicked:', supplement.name, 'ID:', supplement.id);
+    console.log('Full supplement object:', supplement);
+    // Navigate using Router service instead of routerLink
+    this.router.navigate(['/supplement', supplement.id]);
+  }
+
 
   getSupplementsByCategory(categoryId: string): SupplementDetail[] {
     return this.supplements.filter(supplement => supplement.category === categoryId);

@@ -1,0 +1,197 @@
+<div class="research-container">
+  <!-- Hero Section -->
+  <section class="research-hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-text">Evidence-Based Science</span>
+        </div>
+        <h1 class="hero-title">The Science Behind Every Supplement</h1>
+        <p class="hero-subtitle">
+          Every supplement we recommend is backed by rigorous scientific research.<br>
+          <strong>No guesswork. No marketing fluff. Just proven results.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research Standards -->
+  <section class="standards-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Our Research Standards</h2>
+        <p class="section-subtitle">We only recommend supplements that meet these strict criteria</p>
+      </div>
+      
+      <div class="standards-grid">
+        <div *ngFor="let standard of researchStandards" class="standard-card">
+          <div class="standard-icon">
+            <span class="material-icons">{{ standard.icon }}</span>
+          </div>
+          <h3 class="standard-title">{{ standard.title }}</h3>
+          <p class="standard-description">{{ standard.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research Studies -->
+  <section class="studies-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Research Studies</h2>
+        <p class="section-subtitle">The scientific evidence behind our supplements</p>
+        
+        <!-- Study Statistics -->
+        <div class="study-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ allStudies.length }}</span>
+            <span class="stat-label">Total Studies</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ getMetaAnalysisCount() }}</span>
+            <span class="stat-label">Meta-Analyses</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ getHighCredibilityCount() }}</span>
+            <span class="stat-label">High Credibility (90%+)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study Filters -->
+      <div class="study-filters">
+        <div class="filter-group">
+          <label>Filter by Supplement:</label>
+          <select [(ngModel)]="selectedSupplement" (change)="filterStudies()">
+            <option value="all">All Supplements</option>
+            <option *ngFor="let supplement of getUniqueSupplements()" [value]="supplement">
+              {{ supplement }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label>Filter by Study Type:</label>
+          <select [(ngModel)]="selectedStudyType" (change)="filterStudies()">
+            <option value="all">All Study Types</option>
+            <option value="meta-analysis">Meta-Analysis</option>
+            <option value="systematic-review">Systematic Review</option>
+            <option value="rct">Randomized Controlled Trial</option>
+            <option value="cohort">Cohort Study</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Featured Studies (High Credibility) -->
+      <div class="studies-section-content">
+        <div class="studies-grid">
+          <div *ngFor="let study of getDisplayedStudies()" class="study-card" 
+               [class.highlighted]="study.credibilityScore >= 90">
+            
+            <!-- Credibility Badge -->
+            <div class="credibility-badge" [class]="'credibility-' + study.credibility">
+              <span class="credibility-icon">{{ getCredibilityIcon(study.credibility) }}</span>
+              <span class="credibility-text">{{ getCredibilityLabel(study.credibility) }}</span>
+              <span class="credibility-score">{{ study.credibilityScore }}%</span>
+            </div>
+
+            <div class="study-header">
+              <div class="supplement-badge">{{ study.supplement }}</div>
+              <div class="study-meta">
+                <span class="journal">{{ study.journal }}</span>
+                <span class="year">{{ study.year }}</span>
+              </div>
+            </div>
+            
+            <h3 class="study-title">{{ study.title }}</h3>
+            
+            <!-- Effect Size Display -->
+            <div class="effect-display">
+              <div class="effect-size">
+                <span class="effect-label">Effect Size:</span>
+                <span class="effect-value">{{ study.effectSize }}</span>
+              </div>
+              <div class="study-type">
+                <span class="type-label">Study Type:</span>
+                <span class="type-value">{{ study.studyType }}</span>
+              </div>
+            </div>
+            
+            <div class="study-findings">
+              <div class="finding-highlight">
+                <span class="finding-label">Key Finding:</span>
+                <span class="finding-result">{{ study.findings }}</span>
+              </div>
+              <div class="study-details">
+                <span class="participants">{{ study.participants }}</span>
+                <span class="benefit">{{ study.keyBenefit }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show More/Less Button -->
+        <div class="studies-toggle" *ngIf="allStudies.length > researchStudies.length">
+          <button class="btn btn-secondary" (click)="toggleShowAll()">
+            <span class="btn-text">
+              {{ showAllStudies ? 'Show Less Studies' : 'Show All ' + allStudies.length + ' Studies' }}
+            </span>
+            <span class="btn-arrow" [class.rotated]="showAllStudies">↓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methodology Section -->
+  <section class="methodology-section">
+    <div class="container">
+      <div class="methodology-content">
+        <div class="methodology-text">
+          <h2 class="methodology-title">How We Evaluate Research</h2>
+          <p class="methodology-description">
+            Our team of sports scientists and nutritionists reviews hundreds of studies each month. 
+            We only recommend supplements that have:
+          </p>
+          <ul class="methodology-list">
+            <li>Multiple peer-reviewed studies with consistent results</li>
+            <li>Clear, measurable benefits in athletic populations</li>
+            <li>Proper dosage and timing protocols</li>
+            <li>Minimal side effects and contraindications</li>
+            <li>Independent third-party testing for purity</li>
+          </ul>
+        </div>
+        
+        <div class="methodology-stats">
+          <div class="stat-item">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Studies Reviewed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Supplements Evaluated</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">12</span>
+            <span class="stat-label">Supplements Approved</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to experience science-backed results?</h2>
+        <p>Get your personalized performance box with supplements proven to work.</p>
+        <a routerLink="/wizard" class="btn btn-primary btn-large">
+          <span class="btn-text">Get Your Box</span>
+          <span class="btn-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

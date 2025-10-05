@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { UserProfile, HealthGoal, ActivityLevel, DietType, BudgetRange, UserPreferences } from '../../models/supplement.model';
 import { RecommendationService } from '../../services/recommendation.service';
 import { Recommendation } from '../../models/supplement.model';
@@ -9,39 +10,110 @@ import { Recommendation } from '../../models/supplement.model';
 @Component({
   selector: 'app-recommendation-wizard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, DragDropModule],
   templateUrl: './recommendation-wizard.component.html',
   styleUrls: ['./recommendation-wizard.component.scss']
 })
-export class RecommendationWizardComponent implements OnInit {
-  currentStep = 1;
-  totalSteps = 6;
+export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
+  @ViewChild('chatMessages', { static: false }) chatMessages!: ElementRef;
+  
+  currentQuestion = 0;
+  totalQuestions = 11; // Individual questions instead of steps
   wizardForm: FormGroup;
   recommendations: Recommendation[] = [];
   isLoading = false;
+  isThinking = false;
   subscriptionSuccess = false;
+  showReview = false;
+  textInput = '';
+  numberInput = '';
+  textareaInput = '';
+  userResponses: string[] = [];
+  private shouldScrollToBottom = false;
 
   // Form options
   healthGoals = Object.values(HealthGoal);
   activityLevels = Object.values(ActivityLevel);
-  dietTypes = Object.values(DietType);
+  dietTypes = [
+    'omnivore',
+    'vegetarian', 
+    'vegan',
+    'other'
+  ];
+  
+  // Goal ranking system
+  availableGoals: HealthGoal[] = [];
+  rankedGoals: HealthGoal[] = [];
+  
+  // Body composition options
+  bodyCompositionGoals = [
+    { value: 'maintain', label: 'Maintain current weight', icon: 'balance' },
+    { value: 'lose', label: 'Lose weight', icon: 'trending_down' },
+    { value: 'gain', label: 'Gain weight/muscle', icon: 'trending_up' },
+    { value: 'recomp', label: 'Body recomposition (lose fat, gain muscle)', icon: 'swap_horiz' }
+  ];
+
   trainingFrequencies = [
     '1-2 times per week',
     '3-4 times per week', 
     '5-6 times per week',
     'Daily (7+ times per week)'
   ];
-  sports = [
+  trainingIntensities = [
+    'Light (casual/recreational)',
+    'Moderate (regular training)',
+    'High (competitive/advanced)',
+    'Elite (professional level)'
+  ];
+
+  // Individual questions for chatbot-like experience
+  questions: any[] = [];
+  sportGroups = [
+    {
+      name: 'Endurance Sports',
+      icon: 'directions_run',
+      sports: [
     { value: 'running', label: 'Running', icon: 'directions_run' },
-    { value: 'climbing', label: 'Climbing', icon: 'scaling' },
     { value: 'cycling', label: 'Cycling', icon: 'directions_bike' },
+        { value: 'swimming', label: 'Swimming', icon: 'pool' },
+        { value: 'hiking', label: 'Hiking', icon: 'terrain' }
+      ]
+    },
+    {
+      name: 'Strength & Power',
+      icon: 'fitness_center',
+      sports: [
     { value: 'weightlifting', label: 'Weightlifting', icon: 'fitness_center' },
-    { value: 'yoga', label: 'Yoga', icon: 'self_improvement' },
     { value: 'crossfit', label: 'CrossFit', icon: 'sports_martial_arts' },
-    { value: 'swimming', label: 'Swimming', icon: 'pool' },
-    { value: 'tennis', label: 'Tennis', icon: 'sports_tennis' },
+        { value: 'climbing', label: 'Climbing', icon: 'scaling' }
+      ]
+    },
+    {
+      name: 'Team Sports',
+      icon: 'sports',
+      sports: [
+        { value: 'football', label: 'Football', icon: 'sports_football' },
     { value: 'basketball', label: 'Basketball', icon: 'sports_basketball' },
-    { value: 'football', label: 'Football', icon: 'sports_football' }
+        { value: 'tennis', label: 'Tennis', icon: 'sports_tennis' }
+      ]
+    },
+    {
+      name: 'Mind & Body',
+      icon: 'self_improvement',
+      sports: [
+        { value: 'yoga', label: 'Yoga', icon: 'self_improvement' },
+        { value: 'martial-arts', label: 'Martial Arts', icon: 'sports_martial_arts' },
+        { value: 'dancing', label: 'Dancing', icon: 'music_note' }
+      ]
+    },
+    {
+      name: 'Other',
+      icon: 'more_horiz',
+      sports: [
+        { value: 'golf', label: 'Golf', icon: 'sports_golf' },
+        { value: 'other', label: 'Other', icon: 'more_horiz' }
+      ]
+    }
   ];
   budgetRanges = Object.values(BudgetRange);
 
@@ -53,7 +125,115 @@ export class RecommendationWizardComponent implements OnInit {
   }
 
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initializeGoals();
+    this.initializeQuestions();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
+  }
+
+  private scrollToBottom(): void {
+    if (this.chatMessages) {
+      this.chatMessages.nativeElement.scrollTop = this.chatMessages.nativeElement.scrollHeight;
+    }
+  }
+
+  private initializeQuestions(): void {
+    this.questions = [
+      {
+        id: 'name',
+        question: "Hi! I'm here to help you build the perfect performance box. What should I call you?",
+        type: 'text',
+        placeholder: 'Your name',
+        required: true
+      },
+      {
+        id: 'age',
+        question: "Nice to meet you! How old are you?",
+        type: 'number',
+        placeholder: 'Your age',
+        required: true
+      },
+      {
+        id: 'gender',
+        question: "And just to make sure I get this right for you...",
+        type: 'radio',
+        options: [
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+          { value: 'other', label: 'Other' }
+        ],
+        required: true
+      },
+      {
+        id: 'sports',
+        question: "What sports do you do?",
+        type: 'sports',
+        required: true
+      },
+      {
+        id: 'trainingFrequency',
+        question: "How often do you train?",
+        type: 'radio',
+        options: this.trainingFrequencies.map(freq => ({ value: freq, label: freq })),
+        required: true
+      },
+      {
+        id: 'trainingIntensity',
+        question: "How intense is your training?",
+        type: 'radio',
+        options: this.trainingIntensities.map(intensity => ({ value: intensity, label: intensity })),
+        required: true
+      },
+      {
+        id: 'goals',
+        question: "What are your main goals?",
+        type: 'goals',
+        required: true
+      },
+      {
+        id: 'bodyComposition',
+        question: "What about your body composition?",
+        type: 'radio',
+        options: this.bodyCompositionGoals.map(comp => ({ value: comp.value, label: comp.label })),
+        required: true
+      },
+      {
+        id: 'fitnessLevel',
+        question: "Which box level sounds right for you?",
+        type: 'fitnessLevel',
+        required: true
+      },
+      {
+        id: 'dietType',
+        question: "What's your diet like?",
+        type: 'radio',
+        options: this.dietTypes.map(diet => ({ value: diet, label: this.formatDietLabel(diet) })),
+        required: true
+      },
+      {
+        id: 'otherInfo',
+        question: "Anything else I should know?",
+        type: 'textarea',
+        placeholder: 'Medical conditions, medications, allergies, current supplements, or anything else that might help me customize your box',
+        required: false
+      }
+    ];
+  }
+
+  private initializeGoals(): void {
+    // Initialize available goals (excluding weight-related ones that go in body composition)
+    this.availableGoals = this.healthGoals.filter(goal => 
+      goal !== HealthGoal.WEIGHT_LOSS && 
+      goal !== HealthGoal.MUSCLE_GAIN
+    );
+    this.rankedGoals = [];
+  }
 
   private createForm(): FormGroup {
     return this.fb.group({
@@ -62,61 +242,118 @@ export class RecommendationWizardComponent implements OnInit {
       age: [25, [Validators.required, Validators.min(13), Validators.max(120)]],
       gender: ['', Validators.required],
       
-      // Step 2: Sport & Activity
+      // Step 2: Sport & Activity (Enhanced)
       sports: [[], Validators.required],
       trainingFrequency: ['', Validators.required],
-      
-      // Step 3: Goals & Level
+      trainingIntensity: ['', Validators.required],
+      rankedGoals: [[], Validators.required],
+      bodyComposition: ['', Validators.required],
       fitnessLevel: ['', Validators.required],
-      primaryGoals: [[], Validators.required],
       
-      // Step 4: Diet & Preferences
+      // Step 3: Medical & Other (Consolidated)
       dietType: ['', Validators.required],
-      allergies: [''],
-      currentSupplements: [''],
-      
-      // Step 5: Health & Medical
-      medicalConditions: [''],
-      medications: ['']
+      otherInfo: ['']
     });
   }
 
-  nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
-    }
-  }
-
-  previousStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
-
-  goToStep(step: number): void {
-    if (step >= 1 && step <= this.totalSteps) {
-      this.currentStep = step;
-    }
-  }
-
-  onGoalChange(goal: HealthGoal, event: any): void {
-    const currentGoals = this.wizardForm.get('primaryGoals')?.value || [];
-    if (event.target.checked) {
-      if (!currentGoals.includes(goal)) {
-        currentGoals.push(goal);
-      }
+  nextQuestion(): void {
+    if (this.currentQuestion < this.totalQuestions - 1) {
+      this.isThinking = true;
+      this.shouldScrollToBottom = true;
+      
+      // Simulate thinking time
+      setTimeout(() => {
+        this.currentQuestion++;
+        this.isThinking = false;
+        this.shouldScrollToBottom = true;
+      }, 1500);
     } else {
-      const index = currentGoals.indexOf(goal);
-      if (index > -1) {
-        currentGoals.splice(index, 1);
-      }
+      // Show review
+      this.showReview = true;
+      this.shouldScrollToBottom = true;
     }
-    this.wizardForm.patchValue({ primaryGoals: currentGoals });
+  }
+
+  previousQuestion(): void {
+    if (this.currentQuestion > 0) {
+      this.currentQuestion--;
+      this.showReview = false;
+    }
+  }
+
+  answerQuestion(value: any): void {
+    const currentQ = this.questions[this.currentQuestion];
+    
+    // Update form value
+    if (currentQ.type === 'sports') {
+      // Handle sports selection
+      const currentSports = this.wizardForm.get('sports')?.value || [];
+      if (currentSports.includes(value)) {
+        const newSports = currentSports.filter((s: string) => s !== value);
+        this.wizardForm.patchValue({ sports: newSports });
+      } else {
+        this.wizardForm.patchValue({ sports: [...currentSports, value] });
+      }
+    } else if (currentQ.type === 'goals') {
+      // Handle goals selection
+      this.addGoalToRanked(value);
+    } else {
+      this.wizardForm.patchValue({ [currentQ.id]: value });
+    }
+    
+    // Auto-advance for single-select questions
+    if (currentQ.type !== 'sports' && currentQ.type !== 'goals' && currentQ.type !== 'textarea') {
+      this.shouldScrollToBottom = true;
+      setTimeout(() => {
+        this.nextQuestion();
+      }, 500);
+    }
+  }
+
+  // Drag and drop methods
+  dropGoal(event: CdkDragDrop<HealthGoal[]>): void {
+    if (event.previousContainer === event.container) {
+      // Reordering within the same list
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      // Moving from available to ranked
+      const goal = event.previousContainer.data[event.previousIndex];
+      this.rankedGoals.splice(event.currentIndex, 0, goal);
+      this.availableGoals.splice(event.previousIndex, 1);
+    }
+    this.updateRankedGoalsForm();
+  }
+
+  removeGoal(goal: HealthGoal): void {
+    const index = this.rankedGoals.indexOf(goal);
+      if (index > -1) {
+      this.rankedGoals.splice(index, 1);
+      this.availableGoals.push(goal);
+      this.updateRankedGoalsForm();
+    }
+  }
+
+  addGoalToRanked(goal: HealthGoal): void {
+    const availableIndex = this.availableGoals.indexOf(goal);
+    if (availableIndex > -1) {
+      this.availableGoals.splice(availableIndex, 1);
+      this.rankedGoals.push(goal);
+      this.updateRankedGoalsForm();
+    }
+  }
+
+  private updateRankedGoalsForm(): void {
+    this.wizardForm.patchValue({ rankedGoals: this.rankedGoals });
+    this.wizardForm.get('rankedGoals')?.updateValueAndValidity();
+  }
+
+  // Legacy methods for compatibility (can be removed later)
+  onGoalChange(goal: HealthGoal, event: any): void {
+    // This method is no longer used but kept for compatibility
   }
 
   isGoalSelected(goal: HealthGoal): boolean {
-    const currentGoals = this.wizardForm.get('primaryGoals')?.value || [];
-    return currentGoals.includes(goal);
+    return this.rankedGoals.includes(goal);
   }
 
   formatGoalLabel(goal: HealthGoal): string {
@@ -127,8 +364,14 @@ export class RecommendationWizardComponent implements OnInit {
     return level.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  formatDietLabel(diet: DietType): string {
-    return diet.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  formatDietLabel(diet: string): string {
+    const labels: { [key: string]: string } = {
+      'omnivore': 'I eat everything',
+      'vegetarian': 'Vegetarian',
+      'vegan': 'Vegan',
+      'other': 'Other dietary preference'
+    };
+    return labels[diet] || diet.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   formatBudgetLabel(budget: BudgetRange): string {
@@ -150,11 +393,11 @@ export class RecommendationWizardComponent implements OnInit {
         age: formValue.age,
         gender: formValue.gender,
         activityLevel: formValue.activityLevel,
-        primaryGoals: formValue.primaryGoals,
-        currentSupplements: formValue.currentSupplements,
-        medicalConditions: formValue.medicalConditions,
-        medications: formValue.medications,
-        allergies: formValue.allergies,
+        primaryGoals: formValue.rankedGoals,
+        currentSupplements: formValue.otherInfo, // Extract from otherInfo if needed
+        medicalConditions: formValue.otherInfo, // Extract from otherInfo if needed
+        medications: formValue.otherInfo, // Extract from otherInfo if needed
+        allergies: formValue.otherInfo, // Extract from otherInfo if needed
         dietType: formValue.dietType,
         budget: formValue.budget,
         preferences: {
@@ -171,37 +414,144 @@ export class RecommendationWizardComponent implements OnInit {
       setTimeout(() => {
         this.recommendations = this.recommendationService.generateRecommendations(userProfile);
         this.isLoading = false;
-        this.currentStep = this.totalSteps + 1; // Move to results step
+        this.subscriptionSuccess = true;
       }, 2000);
     }
   }
 
-  getStepTitle(): string {
-    const titles = {
-      1: 'Basic Information',
-      2: 'Activity & Goals',
-      3: 'Health & Medical',
-      4: 'Diet & Lifestyle',
-      5: 'Preferences',
-      6: 'Review & Generate'
-    };
-    return titles[this.currentStep as keyof typeof titles] || '';
-  }
-
-  getStepDescription(): string {
-    const descriptions = {
-      1: 'Tell us about yourself to personalize your recommendations',
-      2: 'What are your primary health and fitness goals?',
-      3: 'Any medical conditions or medications we should know about?',
-      4: 'Help us understand your dietary preferences and current routine',
-      5: 'Customize your supplement preferences and budget',
-      6: 'Review your information and generate personalized recommendations'
-    };
-    return descriptions[this.currentStep as keyof typeof descriptions] || '';
+  getCurrentQuestion(): any {
+    return this.questions[this.currentQuestion];
   }
 
   getProgressPercentage(): number {
-    return (this.currentStep / this.totalSteps) * 100;
+    return ((this.currentQuestion + 1) / this.totalQuestions) * 100;
+  }
+
+  isQuestionAnswered(questionId: string): boolean {
+    const value = this.wizardForm.get(questionId)?.value;
+    if (questionId === 'sports') {
+      return Array.isArray(value) && value.length > 0;
+    } else if (questionId === 'goals') {
+      return this.rankedGoals.length > 0;
+    }
+    return !!value;
+  }
+
+  submitTextAnswer(): void {
+    if (this.textInput) {
+      this.userResponses.push(this.textInput);
+      this.answerQuestion(this.textInput);
+      this.textInput = '';
+      this.shouldScrollToBottom = true;
+    }
+  }
+
+  submitNumberAnswer(): void {
+    if (this.numberInput) {
+      this.userResponses.push(this.numberInput);
+      this.answerQuestion(parseInt(this.numberInput));
+      this.numberInput = '';
+      this.shouldScrollToBottom = true;
+    }
+  }
+
+  submitTextareaAnswer(): void {
+    if (this.textareaInput) {
+      this.userResponses.push(this.textareaInput);
+      this.answerQuestion(this.textareaInput);
+      this.textareaInput = '';
+      this.shouldScrollToBottom = true;
+      this.nextQuestion();
+    }
+  }
+
+  getUserResponses(): string[] {
+    return this.userResponses;
+  }
+
+  getLevelTitle(level: string): string {
+    const titles = {
+      'beginner': 'Get Started',
+      'intermediate': 'Build Your Base',
+      'advanced': 'Fuel & Recover'
+    };
+    return titles[level as keyof typeof titles] || level;
+  }
+
+  getLevelDescription(level: string): string {
+    const userProfile = this.buildUserProfile();
+    const supplements = this.getPersonalizedSupplementsForLevel(level, userProfile);
+    
+    if (supplements.length === 0) {
+      return 'Perfect for your goals and activity level';
+    }
+    
+    const supplementNames = supplements.slice(0, 2).map(s => s.name).join(', ');
+    const remaining = supplements.length - 2;
+    
+    if (remaining > 0) {
+      return `${supplementNames} and ${remaining} more supplement${remaining > 1 ? 's' : ''}`;
+    }
+    
+    return supplementNames;
+  }
+
+  getLevelPrice(level: string): string {
+    const userProfile = this.buildUserProfile();
+    const supplements = this.getPersonalizedSupplementsForLevel(level, userProfile);
+    const totalPrice = supplements.reduce((sum, s) => sum + s.price, 0);
+    
+    if (totalPrice === 0) {
+      const prices = {
+        'beginner': '£29/month',
+        'intermediate': '£39/month',
+        'advanced': '£49/month'
+      };
+      return prices[level as keyof typeof prices] || '';
+    }
+    
+    return `£${totalPrice}/month`;
+  }
+
+  getPersonalizedSupplementsForLevel(level: string, userProfile: any): any[] {
+    // Generate recommendations based on user profile and level
+    const recommendations = this.recommendationService.generateRecommendations(userProfile);
+    
+    // Filter based on level
+    let levelSupplements = recommendations.map(r => r.supplement);
+    
+    switch (level) {
+      case 'beginner':
+        // Beginner gets 2-3 core supplements
+        levelSupplements = levelSupplements.slice(0, 3);
+        break;
+      case 'intermediate':
+        // Intermediate gets 3-4 supplements
+        levelSupplements = levelSupplements.slice(0, 4);
+        break;
+      case 'advanced':
+        // Advanced gets all recommendations (up to 5)
+        levelSupplements = levelSupplements.slice(0, 5);
+        break;
+    }
+    
+    return levelSupplements;
+  }
+
+  buildUserProfile(): any {
+    return {
+      name: this.wizardForm.get('name')?.value || '',
+      age: this.wizardForm.get('age')?.value || 25,
+      gender: this.wizardForm.get('gender')?.value || 'other',
+      primaryGoals: this.wizardForm.get('rankedGoals')?.value || [],
+      activityLevel: this.wizardForm.get('trainingIntensity')?.value || 'moderate',
+      sports: this.wizardForm.get('sports')?.value || [],
+      trainingFrequency: this.wizardForm.get('trainingFrequency')?.value || '3-4',
+      bodyComposition: this.wizardForm.get('bodyComposition')?.value || 'maintain',
+      dietType: this.wizardForm.get('dietType')?.value || 'omnivore',
+      medicalConditions: this.wizardForm.get('medicalConditions')?.value || [],
+      budget: 'medium' // Default budget
+    };
   }
 
   isStepValid(step: number): boolean {
@@ -211,22 +561,22 @@ export class RecommendationWizardComponent implements OnInit {
       case 2:
         const sports = this.wizardForm.get('sports')?.value || [];
         const trainingFreq = this.wizardForm.get('trainingFrequency')?.value;
-        return !!(sports.length > 0 && trainingFreq);
+        const trainingIntensity = this.wizardForm.get('trainingIntensity')?.value;
+        const rankedGoals = this.wizardForm.get('rankedGoals')?.value || [];
+        const bodyComposition = this.wizardForm.get('bodyComposition')?.value;
+        const fitnessLevel = this.wizardForm.get('fitnessLevel')?.value;
+        return !!(sports.length > 0 && trainingFreq && trainingIntensity && rankedGoals.length > 0 && bodyComposition && fitnessLevel);
       case 3:
-        return !!(this.wizardForm.get('fitnessLevel')?.valid && this.wizardForm.get('primaryGoals')?.valid);
+        return !!this.wizardForm.get('dietType')?.valid; // Medical info is optional, but diet type is required
       case 4:
-        return !!this.wizardForm.get('dietType')?.valid;
-      case 5:
-        return true; // Health & Medical step is optional
-      case 6:
-        return this.wizardForm.valid;
+        return this.wizardForm.valid; // Review step - all required fields should be valid
       default:
         return false;
     }
   }
 
   getFormattedGoals(): string {
-    const goals = this.wizardForm.get('primaryGoals')?.value || [];
+    const goals = this.wizardForm.get('rankedGoals')?.value || [];
     return goals.map((g: HealthGoal) => this.formatGoalLabel(g)).join(', ');
   }
 
@@ -246,7 +596,6 @@ export class RecommendationWizardComponent implements OnInit {
       setTimeout(() => {
         this.isLoading = false;
         this.subscriptionSuccess = true;
-        this.currentStep = this.totalSteps + 1;
       }, 2000);
     }
   }
@@ -257,7 +606,7 @@ export class RecommendationWizardComponent implements OnInit {
     const levels = {
       'beginner': 'Get Started',
       'intermediate': 'Build Your Base',
-      'advanced': 'Fuel & Recover Smarter'
+      'advanced': 'Fuel & Recover'
     };
     return levels[level as keyof typeof levels] || 'Get Started';
   }
@@ -266,8 +615,12 @@ export class RecommendationWizardComponent implements OnInit {
     const sports = this.wizardForm.get('sports')?.value || [];
     if (sports.length === 0) return 'Fitness';
     if (sports.length === 1) {
-      const sport = this.sports.find(s => s.value === sports[0]);
-      return sport?.label || 'Fitness';
+      // Find the sport across all groups
+      for (const group of this.sportGroups) {
+        const sport = group.sports.find(s => s.value === sports[0]);
+        if (sport) return sport.label;
+      }
+      return 'Fitness';
     }
     return `${sports.length} Sports`;
   }
@@ -275,8 +628,12 @@ export class RecommendationWizardComponent implements OnInit {
   getSportsList(): string {
     const sports = this.wizardForm.get('sports')?.value || [];
     return sports.map((sport: string) => {
-      const sportObj = this.sports.find(s => s.value === sport);
-      return sportObj?.label || sport;
+      // Find the sport across all groups
+      for (const group of this.sportGroups) {
+        const sportObj = group.sports.find(s => s.value === sport);
+        if (sportObj) return sportObj.label;
+      }
+      return sport;
     }).join(', ');
   }
 

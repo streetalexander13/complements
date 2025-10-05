@@ -17,6 +17,10 @@
               <a routerLink="/wizard" class="nav-link">Get Your Box</a>
               <a routerLink="/supplements" class="nav-link">Supplements</a>
               <a routerLink="/research" class="nav-link">Science</a>
+              <a routerLink="/cart" class="nav-link cart-link">
+                <span class="material-icons">shopping_cart</span>
+                <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+              </a>
             </nav>
 
             <!-- Mobile Menu Button -->
@@ -36,6 +40,9 @@
             <a routerLink="/wizard" class="mobile-nav-link" (click)="closeMobileMenu()">Get Your Box</a>
             <a routerLink="/supplements" class="mobile-nav-link" (click)="closeMobileMenu()">Supplements</a>
             <a routerLink="/research" class="mobile-nav-link" (click)="closeMobileMenu()">Science</a>
+            <a routerLink="/cart" class="mobile-nav-link" (click)="closeMobileMenu()">
+              Cart <span class="cart-count" *ngIf="cartItemCount > 0">({{ cartItemCount }})</span>
+            </a>
             <div class="mobile-nav-auth">
               <a routerLink="/login" class="mobile-nav-link auth-link" (click)="closeMobileMenu()">Login</a>
               <a routerLink="/signup" class="mobile-nav-link auth-link primary" (click)="closeMobileMenu()">Sign Up</a>
