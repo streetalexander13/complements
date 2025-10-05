@@ -13,18 +13,31 @@
 
   <!-- Chat Interface -->
   <div class="chat-container">
-    <div class="chat-messages" #chatMessages>
+    <div class="chat-messages" #chatContainer>
       
-      <!-- Current Question -->
-      <div *ngIf="!isThinking && !showReview" class="message bot-message">
-        <div class="message-avatar">
+      <!-- Chat History -->
+      <div *ngFor="let message of chatMessages; let i = index" class="message" 
+           [class.bot-message]="message.type === 'bot'" 
+           [class.user-message]="message.type === 'user'">
+        
+        <!-- Bot Message -->
+        <div *ngIf="message.type === 'bot'" class="message-avatar">
           <div class="avatar-circle">
             <span class="material-icons">psychology</span>
           </div>
         </div>
+        
         <div class="message-content">
-          <div class="message-text typing-animation">
-            {{ getCurrentQuestion()?.question }}
+          <div class="message-text" 
+               [class.typing-animation]="i === chatMessages.length - 1 && message.type === 'bot' && !isThinking">
+            {{ message.content }}
+          </div>
+        </div>
+        
+        <!-- User Message -->
+        <div *ngIf="message.type === 'user'" class="message-avatar">
+          <div class="avatar-circle user">
+            <span class="material-icons">person</span>
           </div>
         </div>
       </div>
@@ -41,18 +54,6 @@
             <span></span>
             <span></span>
             <span></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- User Responses -->
-      <div *ngFor="let response of getUserResponses()" class="message user-message">
-        <div class="message-content">
-          <div class="message-text">{{ response }}</div>
-        </div>
-        <div class="message-avatar">
-          <div class="avatar-circle user">
-            <span class="material-icons">person</span>
           </div>
         </div>
       </div>

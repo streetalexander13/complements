@@ -15,7 +15,7 @@ import { Recommendation } from '../../models/supplement.model';
   styleUrls: ['./recommendation-wizard.component.scss']
 })
 export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
-  @ViewChild('chatMessages', { static: false }) chatMessages!: ElementRef;
+  @ViewChild('chatContainer', { static: false }) chatMessagesContainer!: ElementRef;
   
   currentQuestion = 0;
   totalQuestions = 11; // Individual questions instead of steps
@@ -29,6 +29,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   numberInput = '';
   textareaInput = '';
   userResponses: string[] = [];
+  chatMessages: { type: 'bot' | 'user', content: string, timestamp?: Date }[] = [];
   private shouldScrollToBottom = false;
 
   // Form options
@@ -128,6 +129,18 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.initializeGoals();
     this.initializeQuestions();
+    this.initializeChat();
+  }
+
+  private initializeChat(): void {
+    // Add the first question to chat history
+    if (this.questions.length > 0) {
+      this.chatMessages.push({
+        type: 'bot',
+        content: this.questions[0].question,
+        timestamp: new Date()
+      });
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -138,8 +151,8 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   }
 
   private scrollToBottom(): void {
-    if (this.chatMessages) {
-      this.chatMessages.nativeElement.scrollTop = this.chatMessages.nativeElement.scrollHeight;
+    if (this.chatMessagesContainer) {
+      this.chatMessagesContainer.nativeElement.scrollTop = this.chatMessagesContainer.nativeElement.scrollHeight;
     }
   }
 
@@ -257,6 +270,41 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   }
 
   nextQuestion(): void {
+    // Handle current question response before advancing
+    const currentQ = this.questions[this.currentQuestion];
+    
+    // Add user response to chat history for multi-select questions
+    if (currentQ.type === 'sports') {
+      const selectedSports = this.wizardForm.get('sports')?.value || [];
+      if (selectedSports.length > 0) {
+        // Format sports selection for display
+        const sportsList = selectedSports.map((sport: string) => {
+          // Find the sport label from sportGroups
+          for (const group of this.sportGroups) {
+            const sportObj = group.sports.find(s => s.value === sport);
+            if (sportObj) return sportObj.label;
+          }
+          return sport;
+        }).join(', ');
+        
+        this.chatMessages.push({
+          type: 'user',
+          content: sportsList,
+          timestamp: new Date()
+        });
+      }
+    } else if (currentQ.type === 'goals') {
+      const rankedGoals = this.wizardForm.get('rankedGoals')?.value || [];
+      if (rankedGoals.length > 0) {
+        const goalsList = rankedGoals.map((goal: HealthGoal) => this.formatGoalLabel(goal)).join(', ');
+        this.chatMessages.push({
+          type: 'user',
+          content: goalsList,
+          timestamp: new Date()
+        });
+      }
+    }
+    
     if (this.currentQuestion < this.totalQuestions - 1) {
       this.isThinking = true;
       this.shouldScrollToBottom = true;
@@ -265,6 +313,16 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.currentQuestion++;
         this.isThinking = false;
+        
+        // Add the new question to chat history
+        if (this.questions[this.currentQuestion]) {
+          this.chatMessages.push({
+            type: 'bot',
+            content: this.questions[this.currentQuestion].question,
+            timestamp: new Date()
+          });
+        }
+        
         this.shouldScrollToBottom = true;
       }, 1500);
     } else {
@@ -283,6 +341,25 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
 
   answerQuestion(value: any): void {
     const currentQ = this.questions[this.currentQuestion];
+    
+    // Add user response to chat history for single-select questions
+    if (currentQ.type === 'radio' || currentQ.type === 'fitnessLevel') {
+      let displayValue = value;
+      
+      // Format the display value for better readability
+      if (currentQ.type === 'radio' && currentQ.options) {
+        const option = currentQ.options.find((opt: any) => opt.value === value);
+        displayValue = option ? option.label : value;
+      } else if (currentQ.type === 'fitnessLevel') {
+        displayValue = this.getLevelTitle(value);
+      }
+      
+      this.chatMessages.push({
+        type: 'user',
+        content: displayValue,
+        timestamp: new Date()
+      });
+    }
     
     // Update form value
     if (currentQ.type === 'sports') {
@@ -307,6 +384,9 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.nextQuestion();
       }, 500);
+    } else if (currentQ.type === 'sports') {
+      // For sports, we need to handle the response when they click continue
+      // The sports selection is handled in the continue button
     }
   }
 
@@ -440,6 +520,14 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   submitTextAnswer(): void {
     if (this.textInput) {
       this.userResponses.push(this.textInput);
+      
+      // Add user response to chat history
+      this.chatMessages.push({
+        type: 'user',
+        content: this.textInput,
+        timestamp: new Date()
+      });
+      
       this.answerQuestion(this.textInput);
       this.textInput = '';
       this.shouldScrollToBottom = true;
@@ -449,6 +537,14 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   submitNumberAnswer(): void {
     if (this.numberInput) {
       this.userResponses.push(this.numberInput);
+      
+      // Add user response to chat history
+      this.chatMessages.push({
+        type: 'user',
+        content: this.numberInput,
+        timestamp: new Date()
+      });
+      
       this.answerQuestion(parseInt(this.numberInput));
       this.numberInput = '';
       this.shouldScrollToBottom = true;
@@ -458,6 +554,14 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   submitTextareaAnswer(): void {
     if (this.textareaInput) {
       this.userResponses.push(this.textareaInput);
+      
+      // Add user response to chat history
+      this.chatMessages.push({
+        type: 'user',
+        content: this.textareaInput,
+        timestamp: new Date()
+      });
+      
       this.answerQuestion(this.textareaInput);
       this.textareaInput = '';
       this.shouldScrollToBottom = true;
