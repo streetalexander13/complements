@@ -4,7 +4,7 @@
     <div class="container">
       <div class="header-content">
         <div class="header-badge">
-          <span class="badge-text">Your Cart</span>
+          <span class="badge-text">Your Basket</span>
         </div>
         <h1 class="cart-title">Review Your Selections</h1>
         <p class="cart-subtitle">
@@ -14,27 +14,27 @@
     </div>
   </section>
 
-  <!-- Cart Content -->
+  <!-- Basket Content -->
   <section class="cart-content">
     <div class="container">
-      <!-- Empty Cart State -->
+      <!-- Empty Basket State -->
       <div *ngIf="cartItems.length === 0" class="empty-cart">
         <div class="empty-cart-content">
           <div class="empty-cart-icon">
             <span class="material-icons">shopping_cart</span>
           </div>
-          <h2 class="empty-cart-title">Your cart is empty</h2>
+          <h2 class="empty-cart-title">Your basket is empty</h2>
           <p class="empty-cart-description">
-            Add some supplements to your cart to get started with your personalized performance box.
+            Add some supplements to your basket to get started with your personalised performance box.
           </p>
           <a routerLink="/supplements" class="btn btn-primary">
-            <span class="btn-text">Browse Supplements</span>
+            <span class="btn-text">Browse supplements</span>
             <span class="btn-arrow">→</span>
           </a>
         </div>
       </div>
 
-      <!-- Cart Items -->
+      <!-- Basket Items -->
       <div *ngIf="cartItems.length > 0" class="cart-items-section">
         <div class="cart-items">
           <div *ngFor="let item of cartItems" class="cart-item">
@@ -86,10 +86,10 @@
           </div>
         </div>
 
-        <!-- Cart Summary -->
+        <!-- Basket Summary -->
         <div class="cart-summary">
           <div class="summary-card">
-            <h3 class="summary-title">Order Summary</h3>
+            <h3 class="summary-title">Order summary</h3>
             
             <div class="summary-details">
               <div class="summary-row">
@@ -97,7 +97,7 @@
                 <span class="summary-value">{{ formatPrice(cartTotal) }}</span>
               </div>
               <div class="summary-row">
-                <span class="summary-label">Shipping</span>
+                <span class="summary-label">Delivery</span>
                 <span class="summary-value">Free</span>
               </div>
               <div class="summary-row total">
@@ -108,14 +108,14 @@
 
             <div class="summary-actions">
               <button class="btn btn-primary btn-large">
-                <span class="btn-text">Proceed to Checkout</span>
+                <span class="btn-text">Proceed to checkout</span>
                 <span class="btn-arrow">→</span>
               </button>
               <button 
                 type="button" 
                 class="btn btn-secondary"
                 (click)="clearCart()">
-                Clear Cart
+                Clear basket
               </button>
             </div>
           </div>
@@ -128,7 +128,7 @@
   <section *ngIf="cartItems.length > 0" class="continue-shopping">
     <div class="container">
       <div class="shopping-content">
-        <h3>Need personalized recommendations?</h3>
+        <h3>Need personalised recommendations?</h3>
         <p>Take our quick survey to get supplements tailored specifically for your sport and goals.</p>
         <a routerLink="/wizard" class="btn btn-secondary">
           <span class="btn-text">Take Our Survey</span>
