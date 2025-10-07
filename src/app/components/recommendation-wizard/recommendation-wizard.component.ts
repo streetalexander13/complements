@@ -31,6 +31,10 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   userResponses: string[] = [];
   chatMessages: { type: 'bot' | 'user', content: string, timestamp?: Date }[] = [];
   private shouldScrollToBottom = false;
+  showOverlayInput = false;
+  // Removed chat expand/collapse; always show full history
+  private readonly chatScrollDurationMs = 600; // unified, slightly slower scroll
+  levelOptions: string[] = ['simple', 'essentials'];
 
   // Form options
   healthGoals = Object.values(HealthGoal);
@@ -86,7 +90,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       sports: [
     { value: 'weightlifting', label: 'Weightlifting', icon: 'fitness_center' },
     { value: 'crossfit', label: 'CrossFit', icon: 'sports_martial_arts' },
-        { value: 'climbing', label: 'Climbing', icon: 'scaling' }
+        { value: 'climbing', label: 'Climbing', icon: 'terrain' }
       ]
     },
     {
@@ -151,10 +155,23 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   }
 
   private scrollToBottom(): void {
-    if (this.chatMessagesContainer) {
-      this.chatMessagesContainer.nativeElement.scrollTop = this.chatMessagesContainer.nativeElement.scrollHeight;
-    }
+    if (!this.chatMessagesContainer) return;
+    const el = this.chatMessagesContainer.nativeElement as HTMLElement;
+    const start = el.scrollTop;
+    const end = el.scrollHeight;
+    const duration = this.chatScrollDurationMs;
+    const startTime = performance.now();
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const step = (now: number) => {
+      const elapsed = Math.min(1, (now - startTime) / duration);
+      const value = start + (end - start) * easeOutCubic(elapsed);
+      el.scrollTop = value;
+      if (elapsed < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
+
+  // Removed toggleChatExpand and getVisibleChatMessages; chat always shows full history
 
   private getThinkingTime(question: any): number {
     if (!question) return 800; // Default for review section
@@ -245,7 +262,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       },
       {
         id: 'fitnessLevel',
-        question: "Which box level sounds right for you?",
+        question: "How many products are you comfortable using in a regimen? Select the answer that fits you best.",
         type: 'fitnessLevel',
         required: true
       },
@@ -270,7 +287,11 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
     // Initialize available goals (excluding weight-related ones that go in body composition)
     this.availableGoals = this.healthGoals.filter(goal => 
       goal !== HealthGoal.WEIGHT_LOSS && 
-      goal !== HealthGoal.MUSCLE_GAIN
+      goal !== HealthGoal.MUSCLE_GAIN &&
+      goal !== HealthGoal.COGNITIVE_FUNCTION &&
+      goal !== HealthGoal.SKIN_HEALTH &&
+      goal !== HealthGoal.SLEEP_QUALITY &&
+      goal !== HealthGoal.BONE_HEALTH
     );
     this.rankedGoals = [];
   }
@@ -389,6 +410,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         content: displayValue,
         timestamp: new Date()
       });
+      this.shouldScrollToBottom = true;
     }
     
     // Update form value
@@ -502,21 +524,24 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       const userProfile: UserProfile = {
         age: formValue.age,
         gender: formValue.gender,
-        activityLevel: formValue.activityLevel,
-        primaryGoals: formValue.rankedGoals,
-        currentSupplements: formValue.otherInfo, // Extract from otherInfo if needed
-        medicalConditions: formValue.otherInfo, // Extract from otherInfo if needed
-        medications: formValue.otherInfo, // Extract from otherInfo if needed
-        allergies: formValue.otherInfo, // Extract from otherInfo if needed
-        dietType: formValue.dietType,
-        budget: formValue.budget,
+        activityLevel: this.mapTrainingIntensityToActivityLevel(formValue.trainingIntensity),
+        primaryGoals: Array.isArray(formValue.rankedGoals) ? formValue.rankedGoals : [],
+        // These fields are not explicitly collected; default to empty arrays
+        currentSupplements: [],
+        medicalConditions: [],
+        medications: [],
+        allergies: [],
+        dietType: this.coerceDietType(formValue.dietType),
+        // Not collected in the wizard; default to medium to avoid type errors
+        budget: BudgetRange.MEDIUM,
+        // Not collected in the wizard; provide sensible defaults
         preferences: {
-          pillSize: formValue.pillSize,
-          frequency: formValue.frequency,
-          form: formValue.form,
-          organic: formValue.organic,
-          thirdPartyTested: formValue.thirdPartyTested,
-          allergenFree: formValue.allergenFree
+          pillSize: 'medium',
+          frequency: 'daily',
+          form: 'capsules',
+          organic: false,
+          thirdPartyTested: true,
+          allergenFree: false
         }
       };
 
@@ -526,6 +551,39 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         this.isLoading = false;
         this.subscriptionSuccess = true;
       }, 2000);
+    }
+  }
+
+  private mapTrainingIntensityToActivityLevel(intensity: string): ActivityLevel {
+    if (!intensity) return ActivityLevel.MODERATELY_ACTIVE;
+    const value = String(intensity).toLowerCase();
+    if (value.includes('elite')) return ActivityLevel.EXTREMELY_ACTIVE;
+    if (value.includes('high')) return ActivityLevel.VERY_ACTIVE;
+    if (value.includes('moderate')) return ActivityLevel.MODERATELY_ACTIVE;
+    if (value.includes('light')) return ActivityLevel.LIGHTLY_ACTIVE;
+    return ActivityLevel.MODERATELY_ACTIVE;
+  }
+
+  private coerceDietType(diet: string): DietType {
+    switch (diet) {
+      case 'omnivore':
+        return DietType.OMNIVORE;
+      case 'vegetarian':
+        return DietType.VEGETARIAN;
+      case 'vegan':
+        return DietType.VEGAN;
+      case 'keto':
+        return DietType.KETO;
+      case 'paleo':
+        return DietType.PALEO;
+      case 'mediterranean':
+        return DietType.MEDITERRANEAN;
+      case 'gluten-free':
+        return DietType.GLUTEN_FREE;
+      case 'dairy-free':
+        return DietType.DAIRY_FREE;
+      default:
+        return DietType.OMNIVORE;
     }
   }
 
@@ -561,6 +619,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       this.answerQuestion(this.textInput);
       this.textInput = '';
       this.shouldScrollToBottom = true;
+      setTimeout(() => this.scrollToBottom(), 60);
     }
   }
 
@@ -578,6 +637,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       this.answerQuestion(parseInt(this.numberInput));
       this.numberInput = '';
       this.shouldScrollToBottom = true;
+      setTimeout(() => this.scrollToBottom(), 60);
     }
   }
 
@@ -595,8 +655,24 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       this.answerQuestion(this.textareaInput);
       this.textareaInput = '';
       this.shouldScrollToBottom = true;
+      setTimeout(() => this.scrollToBottom(), 0);
       this.nextQuestion();
     }
+  }
+
+  submitNothingElse(): void {
+    // Add "Nothing else" to chat history
+    this.chatMessages.push({
+      type: 'user',
+      content: 'Nothing else',
+      timestamp: new Date()
+    });
+    
+    // Answer with empty string
+    this.answerQuestion('');
+    this.shouldScrollToBottom = true;
+    setTimeout(() => this.scrollToBottom(), 0);
+    this.nextQuestion();
   }
 
   getUserResponses(): string[] {
@@ -605,8 +681,8 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
 
   getLevelTitle(level: string): string {
     const titles = {
-      'beginner': 'Get Started',
-      'intermediate': 'Build Your Base',
+      'beginner': 'Simple',
+      'intermediate': 'Essentials',
       'advanced': 'Fuel & Recover'
     };
     return titles[level as keyof typeof titles] || level;
@@ -620,14 +696,58 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       return 'Perfect for your goals and activity level';
     }
     
+    // Create a more descriptive message based on the user's profile
+    const primaryGoals = userProfile.primaryGoals || [];
+    const sports = userProfile.sports || [];
+    const trainingFrequency = userProfile.trainingFrequency || '';
+    
+    let description = '';
+    
+    switch (level) {
+      case 'beginner':
+        if (primaryGoals.some((goal: string) => goal.includes('strength') || goal.includes('muscle'))) {
+          description = 'Essential supplements for muscle building and recovery';
+        } else if (sports.includes('running') || sports.includes('cycling')) {
+          description = 'Foundation supplements for endurance training';
+        } else {
+          description = 'Core supplements for overall health and wellness';
+        }
+        break;
+        
+      case 'intermediate':
+        if (primaryGoals.some((goal: string) => goal.includes('strength'))) {
+          description = 'Advanced muscle building with creatine and recovery support';
+        } else if (sports.includes('weightlifting') || sports.includes('crossfit')) {
+          description = 'Performance supplements for strength training';
+        } else if (trainingFrequency.includes('5-6')) {
+          description = 'Recovery and performance for frequent training';
+        } else {
+          description = 'Enhanced supplementation for active lifestyle';
+        }
+        break;
+        
+      case 'advanced':
+        if (trainingFrequency.includes('5-6') || trainingFrequency.includes('Daily')) {
+          description = 'Complete supplementation for elite training demands';
+        } else if (primaryGoals.length >= 3) {
+          description = 'Comprehensive support for multiple health goals';
+        } else {
+          description = 'Full-spectrum supplementation for peak performance';
+        }
+        break;
+        
+      default:
+        description = 'Personalized supplements for your goals';
+    }
+    
     const supplementNames = supplements.slice(0, 2).map(s => s.name).join(', ');
     const remaining = supplements.length - 2;
     
     if (remaining > 0) {
-      return `${supplementNames} and ${remaining} more supplement${remaining > 1 ? 's' : ''}`;
+      return `${description} • ${supplementNames} and ${remaining} more`;
     }
     
-    return supplementNames;
+    return `${description} • ${supplementNames}`;
   }
 
   getLevelPrice(level: string): string {
@@ -651,25 +771,117 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
     // Generate recommendations based on user profile and level
     const recommendations = this.recommendationService.generateRecommendations(userProfile);
     
-    // Filter based on level
+    // Filter and customize based on level and user profile
     let levelSupplements = recommendations.map(r => r.supplement);
     
+    // Apply level-specific filtering and personalization
     switch (level) {
       case 'beginner':
-        // Beginner gets 2-3 core supplements
-        levelSupplements = levelSupplements.slice(0, 3);
+        // Beginner gets 2-3 core supplements, prioritizing foundational ones
+        levelSupplements = this.getBeginnerSupplements(userProfile, levelSupplements);
         break;
       case 'intermediate':
-        // Intermediate gets 3-4 supplements
-        levelSupplements = levelSupplements.slice(0, 4);
+        // Intermediate gets 3-4 supplements with more specialized options
+        levelSupplements = this.getIntermediateSupplements(userProfile, levelSupplements);
         break;
       case 'advanced':
-        // Advanced gets all recommendations (up to 5)
-        levelSupplements = levelSupplements.slice(0, 5);
+        // Advanced gets all recommendations (up to 5) with full specialization
+        levelSupplements = this.getAdvancedSupplements(userProfile, levelSupplements);
         break;
     }
     
     return levelSupplements;
+  }
+
+  private getBeginnerSupplements(userProfile: any, allSupplements: any[]): any[] {
+    // For beginners, prioritize foundational supplements based on their goals
+    const foundationalSupplements = [];
+    
+    // Always include Vitamin D3 for beginners (essential foundation)
+    const vitaminD = allSupplements.find(s => s.id === 'vitamin-d3');
+    if (vitaminD) foundationalSupplements.push(vitaminD);
+    
+    // Add protein if they're doing strength training or muscle building
+    const hasStrengthGoals = userProfile.primaryGoals?.some((goal: string) => 
+      goal.includes('strength') || goal.includes('muscle') || goal.includes('gain')
+    );
+    const isActive = userProfile.trainingFrequency?.includes('3-4') || userProfile.trainingFrequency?.includes('5-6');
+    
+    if (hasStrengthGoals || isActive) {
+      const protein = allSupplements.find(s => s.id === 'whey-protein-isolate');
+      if (protein) foundationalSupplements.push(protein);
+    }
+    
+    // Add omega-3 for cardiovascular health if they're over 30 or have heart health goals
+    const hasHeartGoals = userProfile.primaryGoals?.some((goal: string) => goal.includes('heart'));
+    if (userProfile.age >= 30 || hasHeartGoals) {
+      const omega3 = allSupplements.find(s => s.id === 'omega-3-fish-oil');
+      if (omega3) foundationalSupplements.push(omega3);
+    }
+    
+    // If still less than 3, add probiotic for general health
+    if (foundationalSupplements.length < 3) {
+      const probiotic = allSupplements.find(s => s.id === 'probiotic-complex');
+      if (probiotic) foundationalSupplements.push(probiotic);
+    }
+    
+    return foundationalSupplements.slice(0, 3);
+  }
+
+  private getIntermediateSupplements(userProfile: any, allSupplements: any[]): any[] {
+    // For intermediate, build on beginner foundation with more specialized options
+    const intermediateSupplements = [];
+    
+    // Start with beginner foundation
+    const beginnerSupplements = this.getBeginnerSupplements(userProfile, allSupplements);
+    intermediateSupplements.push(...beginnerSupplements);
+    
+    // Add creatine for strength/power goals if they're training regularly
+    const hasStrengthGoals = userProfile.primaryGoals?.some((goal: string) => 
+      goal.includes('strength') || goal.includes('power')
+    );
+    const trainsRegularly = userProfile.trainingFrequency?.includes('3-4') || userProfile.trainingFrequency?.includes('5-6');
+    
+    if (hasStrengthGoals && trainsRegularly) {
+      const creatine = allSupplements.find(s => s.id === 'creatine-monohydrate');
+      if (creatine && !intermediateSupplements.find(s => s.id === 'creatine-monohydrate')) {
+        intermediateSupplements.push(creatine);
+      }
+    }
+    
+    // Add sport-specific supplements based on their activities
+    const sports = userProfile.sports || [];
+    if (sports.includes('running') || sports.includes('cycling') || sports.includes('swimming')) {
+      // Endurance sports - prioritize recovery and cardiovascular health
+      const omega3 = allSupplements.find(s => s.id === 'omega-3-fish-oil');
+      if (omega3 && !intermediateSupplements.find(s => s.id === 'omega-3-fish-oil')) {
+        intermediateSupplements.push(omega3);
+      }
+    }
+    
+    return intermediateSupplements.slice(0, 4);
+  }
+
+  private getAdvancedSupplements(userProfile: any, allSupplements: any[]): any[] {
+    // For advanced users, provide comprehensive supplementation
+    const advancedSupplements = [];
+    
+    // Start with intermediate foundation
+    const intermediateSupplements = this.getIntermediateSupplements(userProfile, allSupplements);
+    advancedSupplements.push(...intermediateSupplements);
+    
+    // Add all remaining high-confidence recommendations
+    const recommendations = this.recommendationService.generateRecommendations(userProfile);
+    const allRecommended = recommendations.map(r => r.supplement);
+    
+    // Add any supplements not already included
+    for (const supplement of allRecommended) {
+      if (!advancedSupplements.find(s => s.id === supplement.id)) {
+        advancedSupplements.push(supplement);
+      }
+    }
+    
+    return advancedSupplements.slice(0, 5);
   }
 
   buildUserProfile(): any {
@@ -732,6 +944,12 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         this.subscriptionSuccess = true;
       }, 2000);
     }
+  }
+
+  subscribeToBoxForLevel(level: string): void {
+    // set selected level before subscribing
+    this.wizardForm.patchValue({ fitnessLevel: level });
+    this.subscribeToBox();
   }
 
 
@@ -822,4 +1040,57 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
     };
     return prices[level as keyof typeof prices] || '£29/month';
   }
+
+  shouldUseOverlayInput(): boolean {
+    const currentQ = this.getCurrentQuestion();
+    if (!currentQ) return false;
+    
+    // Don't use overlay for any inputs - show everything inline for better UX
+    return false;
+  }
+
+  toggleOverlayInput(): void {
+    this.showOverlayInput = !this.showOverlayInput;
+  }
+
+  closeOverlayInput(): void {
+    this.showOverlayInput = false;
+  }
+
+  getOverlayTitle(): string {
+    const currentQ = this.getCurrentQuestion();
+    if (!currentQ) return '';
+    
+    // Only textarea uses overlay
+    if (currentQ.type === 'textarea') {
+      return 'Additional Information';
+    }
+    
+    return 'Input';
+  }
+
+  // Dynamically size the input area based on the current question type.
+  // We animate min-height in CSS for smooth grow/shrink.
+  getInputMinHeight(): number {
+    const q = this.getCurrentQuestion();
+    if (!q) return 120;
+    switch (q.type) {
+      case 'text':
+      case 'number':
+        return 120; // compact
+      case 'radio':
+        return 220; // a couple of buttons
+      case 'sports':
+        return 420; // grid of sport buttons
+      case 'goals':
+        return 460; // two columns + ranked area
+      case 'fitnessLevel':
+        return 520; // 3 cards grid
+      case 'textarea':
+        return 240; // larger text input
+      default:
+        return 200;
+    }
+  }
+
 }

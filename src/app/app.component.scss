@@ -355,6 +355,20 @@
     padding: var(--space-md) 0;
   }
 
+  /* Make header fully fixed on mobile */
+  .app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+  }
+
+  /* Ensure content starts below fixed header */
+  .app-main {
+    padding-top: 60px;
+  }
+
   .footer-main {
     flex-direction: column;
     gap: var(--space-lg);
@@ -366,6 +380,10 @@
 }
 
 @media (max-width: 480px) {
+  /* Slightly smaller offset for very small screens */
+  .app-main {
+    padding-top: 50px;
+  }
   .footer-links {
     flex-direction: column;
     gap: var(--space-md);

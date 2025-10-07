@@ -1,24 +1,23 @@
-<div class="chatbot-wizard">
-  <!-- Progress Bar -->
-  <div class="progress-container">
-    <div class="progress-content">
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
-      </div>
-      <div class="progress-text">
-        <span class="question-counter">{{ currentQuestion + 1 }} of {{ totalQuestions }}</span>
-      </div>
+<!-- Progress Bar -->
+<div class="progress-container">
+  <div class="progress-content">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+    </div>
+    <div class="progress-text">
+      <span class="question-counter">{{ currentQuestion + 1 }} / {{ totalQuestions }}</span>
     </div>
   </div>
+</div>
 
-  <!-- Chat Interface -->
-  <div class="chat-container">
-    <div class="chat-messages" #chatContainer>
-      
-      <!-- Chat History -->
-      <div *ngFor="let message of chatMessages; let i = index" class="message" 
-           [class.bot-message]="message.type === 'bot'" 
-           [class.user-message]="message.type === 'user'">
+<div *ngIf="!showReview" class="wizard-columns">
+    <div class="chat-container">
+      <div class="chat-messages" #chatContainer *ngIf="!showReview">
+        
+        <!-- Chat History -->
+        <div *ngFor="let message of chatMessages; let i = index" class="message" 
+             [class.bot-message]="message.type === 'bot'" 
+             [class.user-message]="message.type === 'user'">
         
         <!-- Bot Message -->
         <div *ngIf="message.type === 'bot'" class="message-avatar">
@@ -59,9 +58,21 @@
       </div>
 
     </div>
+      
+    </div>
 
-    <!-- Question Input Area -->
-    <div *ngIf="!isThinking && !showReview" class="question-input">
+    <!-- Question Input Area (separate, floating footer) -->
+    <div *ngIf="!showReview" 
+         class="question-input fixed-footer"
+         [style.minHeight.px]="getInputMinHeight()"
+         [class.overlay-input]="shouldUseOverlayInput()"
+         [class.visible]="shouldUseOverlayInput() && showOverlayInput">
+      <div *ngIf="shouldUseOverlayInput()" class="overlay-header">
+        <h3 class="overlay-title">{{ getOverlayTitle() }}</h3>
+        <button class="close-btn" (click)="closeOverlayInput()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
       <div class="input-container">
         
         <!-- Text Input -->
@@ -69,7 +80,7 @@
           <input 
             type="text" 
             [(ngModel)]="textInput"
-            [placeholder]="getCurrentQuestion()?.placeholder"
+            [placeholder]="getCurrentQuestion()?.placeholder || 'Enter your name'"
             class="text-input"
             (keyup.enter)="submitTextAnswer()">
           <button 
@@ -85,7 +96,7 @@
           <input 
             type="number" 
             [(ngModel)]="numberInput"
-            [placeholder]="getCurrentQuestion()?.placeholder"
+            [placeholder]="getCurrentQuestion()?.placeholder || 'Enter your age'"
             class="text-input"
             (keyup.enter)="submitNumberAnswer()">
           <button 
@@ -178,13 +189,13 @@
         <div *ngIf="getCurrentQuestion()?.type === 'fitnessLevel'" class="fitness-level-selection">
           <div class="level-grid">
             <button 
-              *ngFor="let level of ['beginner', 'intermediate', 'advanced']" 
+              *ngFor="let level of ['beginner', 'intermediate']" 
               class="level-btn"
               [class.selected]="wizardForm.get('fitnessLevel')?.value === level"
               (click)="answerQuestion(level)">
               <div class="level-card">
-                <h3>{{ getLevelTitle(level) }}</h3>
-                <p>{{ getLevelDescription(level) }}</p>
+                <h3>{{ level === 'beginner' ? 'Simple' : 'Essentials' }}</h3>
+                <p>{{ level === 'beginner' ? '3 products' : '4-5 products' }}</p>
                 
                 <!-- Show personalized supplements -->
                 <div class="level-supplements">
@@ -202,111 +213,85 @@
         </div>
 
         <!-- Textarea Input -->
-        <div *ngIf="getCurrentQuestion()?.type === 'textarea'" class="input-group">
-          <textarea 
-            [(ngModel)]="textareaInput"
-            [placeholder]="getCurrentQuestion()?.placeholder"
-            class="textarea-input"
-            rows="4"></textarea>
-          <button 
-            class="send-btn"
-            (click)="submitTextareaAnswer()">
-            <span class="material-icons">send</span>
+        <div *ngIf="getCurrentQuestion()?.type === 'textarea'" class="textarea-input-container">
+          <div class="input-group">
+            <textarea 
+              [(ngModel)]="textareaInput"
+              [placeholder]="getCurrentQuestion()?.placeholder || 'Tell us anything else we should know...'"
+              class="textarea-input"
+              rows="4"></textarea>
+            <button 
+              class="send-btn"
+              (click)="submitTextareaAnswer()">
+              <span class="material-icons">send</span>
+            </button>
+          </div>
+          <div class="textarea-actions">
+            <button 
+              class="nothing-else-btn"
+              (click)="submitNothingElse()">
+              Nothing else
+            </button>
+          </div>
+        </div>
+
+        <!-- Overlay Trigger for Complex Inputs -->
+        <div *ngIf="shouldUseOverlayInput() && !showOverlayInput" class="overlay-trigger">
+          <button class="trigger-btn" (click)="toggleOverlayInput()">
+            <span class="material-icons">expand_more</span>
+            <span>{{ getOverlayTitle() }}</span>
           </button>
         </div>
 
       </div>
     </div>
 
+    </div> <!-- /.wizard-columns -->
+
     <!-- Review Section -->
     <div *ngIf="showReview" class="review-section">
-      <div class="message bot-message">
-        <div class="message-avatar">
-          <div class="avatar-circle">
-            <span class="material-icons">psychology</span>
-          </div>
-        </div>
-        <div class="message-content">
-          <div class="message-text">
-            Perfect! Here's what I've put together for you
-          </div>
-        </div>
+      <!-- Review Header -->
+      <div class="review-header">
+        <h2>Perfect! Choose your plan</h2>
+        <p>Pick one of the three options tailored to you</p>
       </div>
+      
+      <!-- Three purchase options -->
+      <div class="plans-grid">
+        <div class="plan-card" *ngFor="let level of ['beginner','intermediate','advanced']">
+          <div class="plan-header">
+            <h3>{{ getLevelTitle(level) }}</h3>
+            <div class="plan-price">{{ getLevelPrice(level) }}</div>
+          </div>
 
-      <!-- Box Preview -->
-      <div class="box-preview">
-        <div class="box-header">
-          <h3>{{ getUserName() }}'s Box</h3>
-          <div class="box-level">{{ getSelectedLevel() }}</div>
-        </div>
-        
-        <div class="box-contents">
-          <div class="content-section">
-            <h4>Equipment</h4>
-            <div class="benefit-list">
-              <div class="benefit-item">
-                <span class="benefit-icon">YOGA</span>
-                <div class="benefit-content">
-                  <h5>Foam Roller</h5>
-                  <p>Recovery after training sessions</p>
-                </div>
-              </div>
-              <div class="benefit-item">
-                <span class="benefit-icon">CLIMB</span>
-                <div class="benefit-content">
-                  <h5>Yoga Mat</h5>
-                  <p>Flexibility and mobility work</p>
-                </div>
-              </div>
+          <div class="plan-description">{{ getLevelDescription(level) }}</div>
+
+          <div class="plan-supplements">
+            <div class="supplement-row" *ngFor="let supplement of getPersonalizedSupplementsForLevel(level, buildUserProfile()).slice(0,4)">
+              <span class="supplement-name">{{ supplement.name }}</span>
+              <span class="supplement-price">£{{ supplement.price }}</span>
             </div>
           </div>
-          
-          <div class="content-section">
-            <h4>Supplements</h4>
-            <div class="benefit-list">
-              <div class="benefit-item">
-                <span class="benefit-icon">STRENGTH</span>
-                <div class="benefit-content">
-                  <h5>Protein ({{ getDietType() }} blend)</h5>
-                  <p><strong>5-15% faster muscle recovery</strong></p>
-                </div>
-              </div>
-              <div class="benefit-item">
-                <span class="benefit-icon material-icons">accessibility</span>
-                <div class="benefit-content">
-                  <h5>Vitamin D3 + K2</h5>
-                  <p><strong>23% stronger bones</strong></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="box-price">
-          <span class="price-label">Monthly subscription</span>
-          <span class="price-amount">{{ getBoxPrice() }}</span>
+
+          <button 
+            class="subscribe-btn"
+            (click)="subscribeToBoxForLevel(level)"
+            [disabled]="isLoading">
+            <span *ngIf="!isLoading">Choose {{ getLevelTitle(level) }}</span>
+            <span *ngIf="isLoading">Setting up your box...</span>
+          </button>
         </div>
       </div>
-
-      <button 
-        class="subscribe-btn"
-        (click)="subscribeToBox()"
-        [disabled]="isLoading">
-        <span *ngIf="!isLoading">Let's do this!</span>
-        <span *ngIf="isLoading">Setting up your box...</span>
-      </button>
     </div>
 
     <!-- Navigation -->
-    <div *ngIf="!isThinking && !showReview" class="chat-navigation">
+    <div class="chat-navigation" [class.hidden]="showReview">
       <button 
-        *ngIf="currentQuestion > 0"
         type="button" 
         class="nav-btn back-btn"
-        (click)="previousQuestion()">
+        (click)="previousQuestion()"
+        [disabled]="currentQuestion === 0 || isThinking">
         <span class="material-icons">arrow_back</span>
         Back
       </button>
     </div>
-  </div>
-</div>

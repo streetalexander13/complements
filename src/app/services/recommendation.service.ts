@@ -73,7 +73,9 @@ export class RecommendationService {
         case HealthGoal.ENDURANCE:
         case HealthGoal.RECOVERY:
           const wheyProtein = supplements.find(s => s.id === 'whey-protein-isolate');
+          const omega3ForRecovery = supplements.find(s => s.id === 'omega-3-fish-oil');
           if (wheyProtein) goalSupplements.push(wheyProtein);
+          if (omega3ForRecovery) goalSupplements.push(omega3ForRecovery);
           break;
 
         case HealthGoal.HEART_HEALTH:
@@ -83,17 +85,82 @@ export class RecommendationService {
 
         case HealthGoal.IMMUNE_SUPPORT:
           const probiotic = supplements.find(s => s.id === 'probiotic-complex');
+          const vitaminDForImmune = supplements.find(s => s.id === 'vitamin-d3');
           if (probiotic) goalSupplements.push(probiotic);
+          if (vitaminDForImmune) goalSupplements.push(vitaminDForImmune);
           break;
 
         case HealthGoal.BONE_HEALTH:
           const vitaminD = supplements.find(s => s.id === 'vitamin-d3');
           if (vitaminD) goalSupplements.push(vitaminD);
           break;
+
+        case HealthGoal.COGNITIVE_FUNCTION:
+        case HealthGoal.ENERGY_LEVELS:
+          const omega3ForBrain = supplements.find(s => s.id === 'omega-3-fish-oil');
+          if (omega3ForBrain) goalSupplements.push(omega3ForBrain);
+          break;
       }
     }
 
+    // Add sport-specific supplements based on activity level and sports
+    const sportSpecificSupplements = this.getSportSpecificSupplements(userProfile);
+    goalSupplements.push(...sportSpecificSupplements);
+
     return goalSupplements;
+  }
+
+  private getSportSpecificSupplements(userProfile: UserProfile): Supplement[] {
+    const supplements = this.supplementDataService.getAllSupplements();
+    const sportSupplements: Supplement[] = [];
+
+    // Check if user has sports data (from the wizard form)
+    const sports = (userProfile as any).sports || [];
+    const trainingFrequency = (userProfile as any).trainingFrequency || '';
+    const trainingIntensity = (userProfile as any).trainingIntensity || '';
+
+    // Endurance sports need more recovery support
+    const enduranceSports = ['running', 'cycling', 'swimming', 'hiking'];
+    const hasEnduranceSports = sports.some((sport: string) => enduranceSports.includes(sport));
+    
+    if (hasEnduranceSports) {
+      const omega3 = supplements.find(s => s.id === 'omega-3-fish-oil');
+      const protein = supplements.find(s => s.id === 'whey-protein-isolate');
+      if (omega3 && !sportSupplements.find(s => s.id === 'omega-3-fish-oil')) {
+        sportSupplements.push(omega3);
+      }
+      if (protein && !sportSupplements.find(s => s.id === 'whey-protein-isolate')) {
+        sportSupplements.push(protein);
+      }
+    }
+
+    // Strength sports need creatine and protein
+    const strengthSports = ['weightlifting', 'crossfit', 'climbing'];
+    const hasStrengthSports = sports.some((sport: string) => strengthSports.includes(sport));
+    
+    if (hasStrengthSports) {
+      const creatine = supplements.find(s => s.id === 'creatine-monohydrate');
+      const protein = supplements.find(s => s.id === 'whey-protein-isolate');
+      if (creatine && !sportSupplements.find(s => s.id === 'creatine-monohydrate')) {
+        sportSupplements.push(creatine);
+      }
+      if (protein && !sportSupplements.find(s => s.id === 'whey-protein-isolate')) {
+        sportSupplements.push(protein);
+      }
+    }
+
+    // High training frequency or intensity needs more recovery support
+    const isHighFrequency = trainingFrequency.includes('5-6') || trainingFrequency.includes('Daily');
+    const isHighIntensity = trainingIntensity.includes('High') || trainingIntensity.includes('Elite');
+    
+    if (isHighFrequency || isHighIntensity) {
+      const probiotic = supplements.find(s => s.id === 'probiotic-complex');
+      if (probiotic && !sportSupplements.find(s => s.id === 'probiotic-complex')) {
+        sportSupplements.push(probiotic);
+      }
+    }
+
+    return sportSupplements;
   }
 
   private createRecommendation(supplement: Supplement, userProfile: UserProfile): Recommendation {

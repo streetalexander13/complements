@@ -468,15 +468,26 @@
 }
 
 .performance-hub {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 3s ease-in-out infinite;
+  position: relative;
+
+  .hub-icon {
+    margin-bottom: var(--space-xs);
+    
+    .material-icons {
+      font-size: 32px;
+      color: var(--white);
+    }
+  }
 
   .hub-text {
     color: var(--white);
@@ -486,6 +497,14 @@
     line-height: 1.2;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .hub-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--text-xs);
+    text-align: center;
+    font-weight: 400;
   }
 }
 
@@ -508,22 +527,65 @@
   position: relative;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     border-color: var(--primary);
 
-    .flow-line {
+    .connection-line {
       opacity: 0.8;
       background: linear-gradient(to bottom, var(--primary), var(--primary-light));
     }
   }
 
-  .pillar-icon {
+  .pillar-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: var(--space-lg);
+  }
+
+  .pillar-icon {
+    margin-bottom: var(--space-md);
     display: flex;
     justify-content: center;
+  }
+
+  .pillar-connection {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .connection-line {
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    background: var(--gray-300);
+    transition: all 0.3s ease;
+  }
+
+  .connection-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  .pillar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .icon-circle {
@@ -535,6 +597,11 @@
     justify-content: center;
     position: relative;
     transition: all 0.3s ease;
+
+    .material-icons {
+      font-size: 24px;
+      color: var(--primary);
+    }
 
     &::before {
       content: '';

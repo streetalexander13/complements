@@ -1,8 +1,9 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { isBrowser } from './utils/browser.utils';
 import { CartService } from './services/cart.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,24 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'With Complements';
   isMobileMenuOpen = false;
   cartItemCount = 0;
+  isWizardPage = false;
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit(): void {
     this.cartService.cartItems$.subscribe(items => {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
+
+    // Set initial route state
+    this.isWizardPage = this.router.url.startsWith('/wizard');
+
+    // Update on navigation
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(e => {
+        this.isWizardPage = e.urlAfterRedirects.startsWith('/wizard');
+      });
   }
 
   toggleMobileMenu(): void {
