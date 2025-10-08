@@ -89,6 +89,8 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     margin: 0;
   }
+  .mobile-only { display: none !important; }
+  .desktop-only { display: inline-flex; }
 }
 
 @keyframes gradientShift {
@@ -114,6 +116,9 @@
     margin: 0 auto;
     padding: 0 var(--space-2xl);
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
   }
 }
 
@@ -154,6 +159,11 @@
     color: var(--gray-600);
     font-weight: 500;
   }
+}
+
+/* Wizard title defaults hidden (shown only on mobile devices) */
+.wizard-mobile-title {
+  display: none;
 }
 
 /* Chat Container */
@@ -1489,7 +1499,7 @@
 /* Chat Navigation */
 .chat-navigation {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: var(--space-lg);
   padding: var(--space-lg) var(--space-2xl);
   border-top: 1px solid var(--gray-200);
@@ -1539,6 +1549,105 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .mobile-only { display: inline-flex; }
+  .desktop-only { display: none; }
+  /* Show global back row on mobile and keep it above the fixed input */
+  .chat-navigation {
+    display: flex;
+    position: relative;
+    padding: var(--space-sm) var(--space-lg);
+    border-top: none;
+    background: transparent;
+    justify-content: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .action-row.mobile-only {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+
+    .nav-btn {
+      flex: 1 1 0;
+    }
+
+    .continue-btn {
+      flex: 1 1 0;
+    }
+
+    .nav-btn,
+    .continue-btn {
+      min-height: 44px;
+    }
+  }
+
+  /* Ensure the mobile Next/Continue/Skip buttons are styled regardless of nesting */
+  button.continue-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      background: rgba(0, 0, 0, 0.1);
+      color: rgba(0, 0, 0, 0.4);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  button.skip-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    color: var(--gray-600);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: var(--space-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    line-height: 1;
+
+    &:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-50);
+    }
+  }
+
+  /* Ensure consistent button look inside action rows */
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    color: var(--gray-700);
+    font-size: var(--text-sm);
+  }
   .wizard-columns {
     height: 100dvh;
     max-height: 100dvh;
@@ -1569,15 +1678,24 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 90; /* keep below app header */
-    padding: var(--space-sm) 0;
+    z-index: 1050; /* below header (1100), above overlays */
+    padding: var(--space-xs) 0;
     height: 56px;
     /* Offset below the app header on mobile to avoid overlap */
-    top: 80px;
+    top: 60px;
     
     .progress-content {
       padding: 0 var(--space-lg);
+      gap: 2px;
     }
+  }
+
+  .wizard-mobile-title {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--black);
+    text-align: center;
   }
   
   .chat-container {
@@ -1588,7 +1706,7 @@
     max-width: 100%;
     margin: 0;
     border-radius: 0;
-    padding-top: 136px; // Fixed header (80px) + fixed progress bar (56px)
+    padding-top: 92px; // tighter: header (60px) + compact progress title area
     padding-bottom: 0; // Remove bottom padding to allow input to be visible
     box-sizing: border-box;
     display: flex;
@@ -1601,6 +1719,13 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+    /* Ensure latest message is not hidden behind fixed input */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    
+    &.compact-chat {
+      /* For simple inputs (name/age), reduce extra space under messages */
+      padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    }
   }
 
   .message {
@@ -1625,6 +1750,14 @@
     bottom: 0;
     left: 0;
     right: 0;
+  }
+
+  /* Override fixed heights to allow compact input area on mobile */
+  .question-input {
+    min-height: auto;
+    max-height: none;
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
   }
 
   .goal-ranking-container {
@@ -1661,18 +1794,48 @@
   }
 }
 
+/* Target touch/mobile devices regardless of width */
+@media (hover: none) and (pointer: coarse) {
+  .progress-container {
+    position: fixed;
+    top: 80px; /* align below fixed app header */
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    height: 48px;
+    padding: 0;
+
+    .progress-content {
+      padding: 0 var(--space-lg);
+    }
+  }
+
+  .wizard-mobile-title {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--black);
+    text-align: center;
+  }
+
+  .chat-container {
+    padding-top: 92px; /* tighter: header (80px) + small gap */
+  }
+}
+
 @media (max-width: 480px) {
   .progress-container {
     height: 48px;
-    top: 64px; /* Smaller header on very small screens */
-    
+    top: 50px; /* Smaller header on very small screens */
+    z-index: 1050; /* ensure visible above content */
+    padding: 0;
     .progress-content {
       padding: 0 var(--space-md);
     }
   }
   
   .chat-container {
-    padding-top: 112px; // Small header (64px) + progress bar (48px)
+    padding-top: 25px; // tighter: header (50px) + compact progress
     padding-bottom: 0; // Remove bottom padding
     display: flex;
     flex-direction: column;
@@ -1684,6 +1847,12 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+    /* Ensure latest message is not hidden behind fixed input */
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+    
+    &.compact-chat {
+      padding-bottom: calc(52px + env(safe-area-inset-bottom));
+    }
   }
 
   .message {
@@ -1716,7 +1885,7 @@
   }
 
   .input-container {
-    height: 100%;
+    height: auto;
     display: flex;
     align-items: center;
   }
@@ -1744,6 +1913,58 @@
         font-size: 18px;
       }
     }
+
+  button.continue-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      background: rgba(0, 0, 0, 0.1);
+      color: rgba(0, 0, 0, 0.4);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  button.skip-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    color: var(--gray-600);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: var(--space-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    line-height: 1;
+
+    &:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-50);
+    }
+  }
   }
 
   /* Ensure 16px on very small screens to avoid focus zoom */

@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, HostListener } from '@angular/core';
+import { isBrowser } from '../../utils/browser.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -152,6 +153,30 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       this.scrollToBottom();
       this.shouldScrollToBottom = false;
     }
+  }
+
+  // Ensure latest message stays visible when viewport changes (e.g., keyboard opens)
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.deferScrollToBottom(120);
+  }
+
+  @HostListener('window:orientationchange')
+  onOrientationChange(): void {
+    this.deferScrollToBottom(180);
+  }
+
+  @HostListener('window:focusin', ['$event'])
+  onWindowFocusIn(event: FocusEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (target && target.closest('.question-input')) {
+      this.deferScrollToBottom(80);
+    }
+  }
+
+  private deferScrollToBottom(delayMs: number = 60): void {
+    this.shouldScrollToBottom = true;
+    setTimeout(() => this.scrollToBottom(), delayMs);
   }
 
   private scrollToBottom(): void {
@@ -1073,7 +1098,7 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
   // We animate min-height in CSS for smooth grow/shrink.
   getInputMinHeight(): number {
     const q = this.getCurrentQuestion();
-    if (!q) return 120;
+    if (!q) return 200;
     switch (q.type) {
       case 'text':
       case 'number':
@@ -1091,6 +1116,28 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
       default:
         return 200;
     }
+  }
+
+  // Mobile spacing tweak: compact mode for simple inputs
+  isCompactInput(): boolean {
+    const q = this.getCurrentQuestion();
+    if (!q) return false;
+    return q.type === 'text' || q.type === 'number';
+  }
+
+  // Mobile detection to disable explicit min-height on smaller/touch devices
+  isMobile(): boolean {
+    if (!isBrowser()) return false;
+    const coarse = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    const smallWidth = window.matchMedia('(max-width: 768px)').matches;
+    return coarse || smallWidth;
+  }
+
+  // Has the current question been answered (for toggling Skip -> Continue)
+  isCurrentAnswered(): boolean {
+    const q = this.getCurrentQuestion();
+    if (!q) return false;
+    return this.isQuestionAnswered(q.id);
   }
 
 }
