@@ -641,10 +641,13 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         timestamp: new Date()
       });
       
-      this.answerQuestion(this.textInput);
+      const currentQ = this.questions[this.currentQuestion];
+      this.wizardForm.patchValue({ [currentQ.id]: this.textInput });
       this.textInput = '';
       this.shouldScrollToBottom = true;
       setTimeout(() => this.scrollToBottom(), 60);
+      
+      // Don't auto-advance - wait for explicit Submit/Continue
     }
   }
 
@@ -659,10 +662,13 @@ export class RecommendationWizardComponent implements OnInit, AfterViewChecked {
         timestamp: new Date()
       });
       
-      this.answerQuestion(parseInt(this.numberInput));
+      const currentQ = this.questions[this.currentQuestion];
+      this.wizardForm.patchValue({ [currentQ.id]: parseInt(this.numberInput) });
       this.numberInput = '';
       this.shouldScrollToBottom = true;
       setTimeout(() => this.scrollToBottom(), 60);
+      
+      // Don't auto-advance - wait for explicit Submit/Continue
     }
   }
 

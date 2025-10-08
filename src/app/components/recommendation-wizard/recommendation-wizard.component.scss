@@ -54,7 +54,6 @@
   gap: var(--space-lg);
   width: 100%;
   max-width: 900px;
-  margin: var(--space-3xl) auto;
 }
 
 @media (min-width: 992px) {
@@ -65,6 +64,7 @@
     max-width: 1400px;
     padding: 0 var(--space-2xl);
     align-items: start;
+    margin: var(--space-3xl) auto;
     /* Force consistent column height on desktop */
     min-height: 50vh;
   }
@@ -722,7 +722,6 @@
       animation: buttonPulse 3s ease-in-out infinite;
       flex-shrink: 0;
       align-self: flex-start;
-      margin-top: var(--space-sm);
 
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
@@ -866,7 +865,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
     width: 100%;
     max-height: 300px;
     overflow-y: auto;
@@ -1500,7 +1498,6 @@
 .chat-navigation {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-lg);
   padding: var(--space-lg) var(--space-2xl);
   border-top: 1px solid var(--gray-200);
   min-height: 60px; /* keep layout stable */
@@ -1550,139 +1547,42 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .mobile-only { display: inline-flex; }
-  .desktop-only { display: none; }
-  /* Show global back row on mobile and keep it above the fixed input */
+  .desktop-only { display: none !important; }
+  
+  /* Hide desktop navigation on mobile */
   .chat-navigation {
-    display: flex;
-    position: relative;
-    padding: var(--space-sm) var(--space-lg);
-    border-top: none;
-    background: transparent;
-    justify-content: flex-start;
-    gap: var(--space-sm);
+    display: none !important;
   }
-
-  .action-row.mobile-only {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-sm);
-
-    .nav-btn {
-      flex: 1 1 0;
-    }
-
-    .continue-btn {
-      flex: 1 1 0;
-    }
-
-    .nav-btn,
-    .continue-btn {
-      min-height: 44px;
-    }
-  }
-
-  /* Ensure the mobile Next/Continue/Skip buttons are styled regardless of nesting */
-  button.continue-btn {
-    padding: var(--space-sm) var(--space-md);
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    line-height: 1;
-
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-      transform: translateY(-1px);
-    }
-
-    &:disabled {
-      background: rgba(0, 0, 0, 0.1);
-      color: rgba(0, 0, 0, 0.4);
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-  }
-
-  button.skip-btn {
-    padding: var(--space-sm) var(--space-md);
-    background: transparent;
-    border: 1px dashed var(--gray-300);
-    border-radius: 8px;
-    color: var(--gray-600);
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-left: var(--space-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    line-height: 1;
-
-    &:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: var(--primary-50);
-    }
-  }
-
-  /* Ensure consistent button look inside action rows */
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-md);
-    background: transparent;
-    border: 1px solid var(--gray-300);
-    border-radius: 8px;
-    color: var(--gray-700);
-    font-size: var(--text-sm);
-  }
-  .wizard-columns {
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-  }
-
+  
+  /* Mobile wizard container - fixed positioning */
   .chatbot-wizard {
-    min-height: 100vh;
-    height: 100vh;
-    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* Prevent mobile viewport issues */
-    height: 100dvh; // Dynamic viewport height
+    height: 100dvh;
     min-height: 100dvh;
-    /* Ensure gradient covers full height */
+    overflow: hidden;
     background-size: 400% 400%;
-    background-attachment: scroll; // Use scroll for mobile
+    background-attachment: scroll;
+    display: flex;
+    flex-direction: column;
   }
 
+  /* Progress bar - always visible at top */
   .progress-container {
     position: fixed;
-    top: 0;
+    top: 71px; /* Below app header */
     left: 0;
     right: 0;
-    z-index: 1050; /* below header (1100), above overlays */
-    padding: var(--space-xs) 0;
+    z-index: 1050;
     height: 56px;
-    /* Offset below the app header on mobile to avoid overlap */
-    top: 60px;
+    padding: var(--space-xs) 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     
     .progress-content {
       padding: 0 var(--space-lg);
@@ -1698,68 +1598,220 @@
     text-align: center;
   }
   
-  .chat-container {
-    padding: 0;
-    height: 100%;
-    max-height: 100%;
-    min-height: 100%;
-    max-width: 100%;
-    margin: 0;
-    border-radius: 0;
-    padding-top: 92px; // tighter: header (60px) + compact progress title area
-    padding-bottom: 0; // Remove bottom padding to allow input to be visible
-    box-sizing: border-box;
+  /* Wizard columns - seamless vertical layout */
+  .wizard-columns {
     display: flex;
     flex-direction: column;
+    height: calc(100dvh - 116px); /* Full height minus progress */
+    margin-top: 65px; /* Progress bar height */
+    overflow: hidden;
+    position: relative;
+    justify-content: center; /* Center the input area */
+    padding: var(--space-xl) var(--space-md);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 1) 100%);
+  }
+  
+  /* Hide chat container on mobile */
+  .chat-container {
+    display: none !important;
   }
 
-  .chat-messages {
-    padding: var(--space-md) var(--space-sm);
-    flex: 1 1 auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 0;
-    /* Ensure latest message is not hidden behind fixed input */
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  /* Mobile question display */
+  .mobile-question-display {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.06);
     
-    &.compact-chat {
-      /* For simple inputs (name/age), reduce extra space under messages */
-      padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    .question-text {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.4;
+    margin: 0;
+      text-align: left;
     }
   }
 
-  .message {
-    max-width: 95%;
-    margin: var(--space-xs) 0;
-  }
-
-  .question-input {
-    position: fixed;
-    background: rgba(255, 255, 255, 0.98);
+  /* Input area - centered card layout on mobile */
+  .question-input.fixed-footer {
+    flex: 0 1 auto;
+    max-height: 75vh; /* Allow more space since no chat */
+    position: relative;
+    background: rgba(255, 255, 255, 1);
     backdrop-filter: blur(20px);
-    padding: var(--space-md);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: var(--space-xl);
+    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom));
     margin: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 200;
-    min-height: 80px;
-    max-height: 80px;
     box-sizing: border-box;
-    flex-shrink: 0;
-    width: 100%;
-    overflow: hidden; // prevent input area scrolling on mobile
-    bottom: 0;
-    left: 0;
-    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   }
 
-  /* Override fixed heights to allow compact input area on mobile */
-  .question-input {
-    min-height: auto;
-    max-height: none;
+  /* Input container with consistent padding */
+  .input-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0;
+    margin-bottom: var(--space-sm);
+  }
+  
+  /* Mobile bottom navigation - below input area */
+  .mobile-bottom-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
     padding-top: var(--space-sm);
-    padding-bottom: var(--space-sm);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: var(--space-sm);
+    flex-shrink: 0;
+    
+    .back-btn-mobile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-lg);
+      background: rgba(255, 255, 255, 1);
+      border: 1.5px solid var(--gray-300);
+      border-radius: 12px;
+      color: var(--gray-700);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 48px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      
+      &:not(:disabled):active {
+        transform: scale(0.97);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      
+      .material-icons {
+        font-size: 20px;
+      }
+    }
+    
+    .continue-btn-mobile {
+      flex: 1;
+      padding: var(--space-sm) var(--space-xl);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: var(--text-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 48px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      
+      &:not(:disabled):active {
+        transform: scale(0.97);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+      }
+    }
+    
+    .skip-btn-mobile {
+      flex: 1;
+      padding: var(--space-sm) var(--space-xl);
+      background: rgba(255, 255, 255, 1);
+      border: 1.5px dashed var(--gray-300);
+      border-radius: 12px;
+      color: var(--gray-600);
+      font-size: var(--text-base);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 48px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      
+      &:active {
+        transform: scale(0.97);
+        background: var(--gray-50);
+      }
+    }
   }
 
+  /* Consistent input styling */
+  .input-group {
+    .text-input,
+    .textarea-input {
+      font-size: 16px; /* Prevent iOS zoom */
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 12px;
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+      
+      &:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+    
+    /* Hide send button on mobile */
+    .send-btn {
+      display: none !important;
+    }
+  }
+
+  /* Radio options with consistent spacing */
+  .radio-options {
+    .option-btn {
+    margin: var(--space-xs) 0;
+      border-radius: 12px;
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  /* Sports selection */
+  .sport-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--space-sm);
+    max-height: 250px;
+    padding: var(--space-xs);
+  }
+
+  .sport-btn {
+    min-width: 80px;
+    padding: var(--space-sm);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    
+    &.selected {
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  /* Goals and levels */
   .goal-ranking-container {
     grid-template-columns: 1fr;
     gap: var(--space-lg);
@@ -1770,27 +1822,15 @@
     gap: var(--space-md);
   }
 
-  .sport-options {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: var(--space-xs);
-    max-height: 250px;
-  }
-
-  .sport-btn {
-    min-width: 80px;
-    padding: var(--space-xs);
-    margin: var(--space-xs);
+  /* Hide continue buttons in sports and goals selections on mobile */
+  .sports-selection .continue-btn,
+  .goals-selection .continue-btn {
+    display: none !important;
   }
 
   .box-contents {
     grid-template-columns: 1fr !important;
     gap: var(--space-lg) !important;
-  }
-
-  /* Prevent iOS zoom on focus by ensuring 16px font-size */
-  .input-container .input-group .text-input,
-  .input-container .input-group .textarea-input {
-    font-size: 16px;
   }
 }
 
@@ -1826,32 +1866,11 @@
 @media (max-width: 480px) {
   .progress-container {
     height: 48px;
-    top: 50px; /* Smaller header on very small screens */
-    z-index: 1050; /* ensure visible above content */
+    top: 75px;
+    z-index: 1050;
     padding: 0;
     .progress-content {
       padding: 0 var(--space-md);
-    }
-  }
-  
-  .chat-container {
-    padding-top: 25px; // tighter: header (50px) + compact progress
-    padding-bottom: 0; // Remove bottom padding
-    display: flex;
-    flex-direction: column;
-  }
-
-  .chat-messages {
-    padding: var(--space-sm);
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 0;
-    /* Ensure latest message is not hidden behind fixed input */
-    padding-bottom: calc(96px + env(safe-area-inset-bottom));
-    
-    &.compact-chat {
-      padding-bottom: calc(52px + env(safe-area-inset-bottom));
     }
   }
 
@@ -1875,102 +1894,23 @@
     min-height: 40px;
   }
 
-  .question-input {
-    padding: var(--space-sm);
-    min-height: 70px;
-    max-height: 70px;
-    position: relative;
-    flex-shrink: 0;
-    width: 100%;
-  }
-
-  .input-container {
-    height: auto;
-    display: flex;
-    align-items: center;
-  }
-
+  /* Smaller input fields on very small screens */
   .input-container .input-group {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-
     .text-input,
     .textarea-input {
       padding: var(--space-sm) var(--space-md);
-      font-size: var(--text-sm);
-      height: 44px;
-      flex: 1;
+      font-size: 16px; /* Prevent zoom on iOS */
+      height: 42px;
     }
 
     .send-btn {
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
 
       .material-icons {
         font-size: 18px;
       }
     }
-
-  button.continue-btn {
-    padding: var(--space-sm) var(--space-md);
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    line-height: 1;
-
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-      transform: translateY(-1px);
-    }
-
-    &:disabled {
-      background: rgba(0, 0, 0, 0.1);
-      color: rgba(0, 0, 0, 0.4);
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-  }
-
-  button.skip-btn {
-    padding: var(--space-sm) var(--space-md);
-    background: transparent;
-    border: 1px dashed var(--gray-300);
-    border-radius: 8px;
-    color: var(--gray-600);
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-left: var(--space-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    line-height: 1;
-
-    &:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: var(--primary-50);
-    }
-  }
-  }
-
-  /* Ensure 16px on very small screens to avoid focus zoom */
-  .input-container .input-group .text-input,
-  .input-container .input-group .textarea-input {
-    font-size: 16px;
   }
 
   .sport-options {
@@ -1981,7 +1921,6 @@
   .sport-btn {
     min-width: 70px;
     padding: var(--space-xs);
-    margin: var(--space-xs);
     
     .sport-label {
       font-size: 10px;

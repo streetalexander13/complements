@@ -1,20 +1,20 @@
 <div class="chatbot-wizard">
-<!-- Progress Bar -->
-<div class="progress-container">
-  <div class="progress-content">
-    <div class="wizard-mobile-title">Get Your Box</div>
-    <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-content">
+      <div class="wizard-mobile-title">Get Your Box</div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+      </div>
+      <div class="progress-text">
+        <span class="question-counter">{{ currentQuestion + 1 }} / {{ totalQuestions }}</span>
+      </div>
     </div>
-    <div class="progress-text">
-      <span class="question-counter">{{ currentQuestion + 1 }} / {{ totalQuestions }}</span>
-    </div>
-  </div>
   </div>
 
-<div *ngIf="!showReview" class="wizard-columns">
+  <div *ngIf="!showReview" class="wizard-columns">
     <div class="chat-container">
-      <div class="chat-messages" #chatContainer *ngIf="!showReview" [class.compact-chat]="isCompactInput()">
+      <div class="chat-messages" #chatContainer *ngIf="!showReview">
         
         <!-- Chat History -->
         <div *ngFor="let message of chatMessages; let i = index" class="message" 
@@ -75,6 +75,12 @@
           <span class="material-icons">close</span>
         </button>
       </div>
+      
+      <!-- Mobile Question Display -->
+      <div *ngIf="isMobile()" class="mobile-question-display">
+        <h2 class="question-text">{{ getCurrentQuestion()?.question }}</h2>
+      </div>
+      
       <div class="input-container">
         
         <!-- Text Input -->
@@ -133,7 +139,7 @@
             </button>
           </div>
           <button 
-            class="continue-btn desktop-only"
+            class="continue-btn"
             (click)="nextQuestion()"
             [disabled]="!isQuestionAnswered('sports')">
             Continue
@@ -180,7 +186,7 @@
             </div>
           </div>
           <button 
-            class="continue-btn desktop-only"
+            class="continue-btn"
             (click)="nextQuestion()"
             [disabled]="!isQuestionAnswered('goals')">
             Continue
@@ -246,6 +252,25 @@
         </div>
 
       </div>
+      
+      <!-- Mobile Bottom Navigation (below input area) -->
+      <div *ngIf="isMobile()" class="mobile-bottom-nav">
+        <button 
+          type="button" 
+          class="nav-btn back-btn-mobile"
+          (click)="previousQuestion()"
+          [disabled]="currentQuestion === 0 || isThinking">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <button 
+          type="button"
+          [ngClass]="{ 'skip-btn-mobile': !isCurrentAnswered(), 'continue-btn-mobile': isCurrentAnswered() }"
+          (click)="nextQuestion()"
+          [disabled]="isThinking">
+          {{ isCurrentAnswered() ? 'Continue' : 'Skip' }}
+        </button>
+      </div>
     </div>
 
     </div> <!-- /.wizard-columns -->
@@ -295,13 +320,6 @@
         [disabled]="currentQuestion === 0 || isThinking">
         <span class="material-icons">arrow_back</span>
         Back
-      </button>
-      <button 
-        type="button"
-        [ngClass]="{ 'skip-btn': !isCurrentAnswered(), 'continue-btn': isCurrentAnswered(), 'mobile-only': isMobile() }"
-        (click)="nextQuestion()"
-        [disabled]="isThinking">
-        {{ isCurrentAnswered() ? 'Continue' : 'Skip' }}
       </button>
     </div>
   </div>
